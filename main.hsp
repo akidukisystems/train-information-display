@@ -1,0 +1,329 @@
+
+    #include "cfg.as"
+    #include "hsp3utf.as"
+
+    #define     TEXT_SIZE_X     8
+    #define     TEXT_SIZE_Y     16
+    #define     TEXT_LENGTH     36
+    #define     TEXT_LINE       2
+    #define     SCREEN_MUL      4
+    #define     OFFSET_X        0
+    #define     OFFSET_Y        1
+
+    screen 0, TEXT_SIZE_X*TEXT_LENGTH+OFFSET_X, TEXT_SIZE_Y*TEXT_LINE+OFFSET_Y
+    screen 1, (TEXT_SIZE_X*TEXT_LENGTH+OFFSET_X)*SCREEN_MUL, (TEXT_SIZE_Y*TEXT_LINE+OFFSET_Y)*SCREEN_MUL
+
+    
+
+    #define     BTN_SIZE_X      128
+    #define     BTN_SIZE_Y      32
+    #define     BTN_MUL         2
+    #define     SPACE           20
+
+    #enum   eType = 0
+    #enum   eFor 
+    #enum   eTime
+    #enum   eCars
+
+    screen 2, BTN_SIZE_X *BTN_MUL *2, 480
+
+    font "MS Gothic", 26
+    objmode 2
+
+    objsize BTN_SIZE_X *BTN_MUL, BTN_SIZE_Y *BTN_MUL, 0
+
+    pos 0, 0 : button gosub "列車接近セット", *l_approaching_true
+    pos BTN_SIZE_X *BTN_MUL, 0 : button gosub "列車接近リセット", *l_approaching_false
+
+    objsize BTN_SIZE_X *BTN_MUL *2, BTN_SIZE_Y *BTN_MUL, 0
+
+    pos 0, BTN_SIZE_Y *BTN_MUL : button gosub "列車順送り", *l_next
+
+    objsize BTN_SIZE_X, BTN_SIZE_Y, 0
+
+    font "MS Gothic", 18
+    objmode 2
+
+    button gosub "列車戻し", *l_prev
+
+    objsize BTN_SIZE_X *BTN_MUL, BTN_SIZE_Y *BTN_MUL, 0
+
+    pos 0, ginfo_cy + SPACE : button gosub "メッセージ表示", *l_msg
+    pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL : button gosub "列車メッセージ表示", *l_trainmsg
+
+    pos 0, ginfo_cy + SPACE : button gosub "メッセージ順送り", *l_nextmsg
+    pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL :  : button gosub "メッセージ戻し", *l_prevmsg
+
+    pos 0, ginfo_cy + SPACE
+
+    button gosub "画面を保存", *l_save
+
+    gsel 1
+
+    font "MS Gothic", 16
+
+    #define j 0
+    #define e 1
+
+    #define isCanview2nd ( ( isApproaching == 0 ) and ( isTrainmsg == 0 ) and ( isMsg == 0 ) )
+
+    entry = 0
+
+    cfgAS_init "entry.txt"
+
+    cfgAS_read "entrycount", entry
+
+    sdim msg_Type, 64, 2, entry
+    sdim msg_For, 64, 2, entry
+    sdim msg_Time, 64, 2, entry
+    sdim msg_Cars, 64, 2, entry
+
+    sdim msg_thistrainmsg, 64, entry
+
+    dim imsg_Type, entry
+    dim imsg_For, entry
+    dim imsg_Time, entry
+    dim imsg_Cars, entry
+
+    dim isBold, 4, entry
+
+    dim imsg_thistrainmsg, entry
+
+    sdim msg_Approaching, 64, 2
+
+    sdim msg_msg, 64, entry
+
+    msgEntry = 0
+
+    dim imsg_msg, entry
+
+    imsg_Approaching = $FF0000
+
+    repeat entry
+
+        cfgAS_read "msg_Type.j."+ cnt +"", msg_Type.j.cnt
+        cfgAS_read "msg_For.j."+ cnt +"", msg_For.j.cnt
+        cfgAS_read "msg_Time.j."+ cnt +"", msg_Time.j.cnt
+        cfgAS_read "msg_Cars.j."+ cnt +"", msg_Cars.j.cnt
+
+        cfgAS_read "msg_Type.e."+ cnt +"", msg_Type.e.cnt
+        cfgAS_read "msg_For.e."+ cnt +"", msg_For.e.cnt
+        cfgAS_read "msg_Time.e."+ cnt +"", msg_Time.e.cnt
+        cfgAS_read "msg_Cars.e."+ cnt +"", msg_Cars.e.cnt
+
+        cfgAS_read "msg_thistrainmsg."+ cnt +"", msg_thistrainmsg.cnt
+        cfgAS_read "imsg_thistrainmsg."+ cnt +"", imsg_thistrainmsg.cnt
+
+        cfgAS_read "imsg_Type."+ cnt +"", imsg_Type.cnt
+        cfgAS_read "imsg_For."+ cnt +"", imsg_For.cnt
+        cfgAS_read "imsg_Time."+ cnt +"", imsg_Time.cnt
+        cfgAS_read "imsg_Cars."+ cnt +"", imsg_Cars.cnt
+
+        cfgAS_read "isBold.Type."+ cnt +"", isBold.eType.cnt
+        cfgAS_read "isBold.For."+ cnt +"", isBold.eFor.cnt
+        cfgAS_read "isBold.Time."+ cnt +"", isBold.eTime.cnt
+        cfgAS_read "isBold.Cars."+ cnt +"", isBold.eCars.cnt
+
+    loop
+
+    cfgAS_read "msg_Approaching.j", msg_Approaching.j
+    cfgAS_read "msg_Approaching.e", msg_Approaching.e
+
+    cfgAS_read "imsg_Approaching", imsg_Approaching
+
+    cfgAS_read "msgentrycount", msgEntry
+
+    sdim msg_msg, 64, msgEntry
+    dim imsg_msg, msgEntry
+
+    repeat msgEntry
+
+        cfgAS_read "msg_msg."+ cnt +"", msg_msg.cnt
+        cfgAS_read "imsg_msg."+ cnt +"", imsg_msg.cnt
+
+    loop
+
+    cfgAS_read "offset.Type", msgoffset.0
+    cfgAS_read "offset.For", msgoffset.1
+    cfgAS_read "offset.Time", msgoffset.2
+    cfgAS_read "offset.Cars", msgoffset.3
+
+    imsg_Approaching = $FF0000
+
+    gsel 0
+    font "MS Gothic", 16
+
+    repeat
+
+        gsel 0
+        redraw 0
+        color : boxf
+
+        rgbcolor imsg_Type.nowTrain : pos TEXT_SIZE_X * msgoffset.0, 0  : mes msg_Type.isEng.nowTrain, 1
+        if ( isBold.eType.nowTrain ) : rgbcolor imsg_Type.nowTrain : pos TEXT_SIZE_X * msgoffset.0 +1, 0  : mes msg_Type.isEng.nowTrain, 1
+
+        rgbcolor imsg_For.nowTrain  : pos TEXT_SIZE_X * msgoffset.1, 0  : mes msg_For.isEng.nowTrain, 1
+        if ( isBold.eFor.nowTrain ) : rgbcolor imsg_For.nowTrain  : pos TEXT_SIZE_X * msgoffset.1 +1, 0  : mes msg_For.isEng.nowTrain, 1
+
+        rgbcolor imsg_Time.nowTrain : pos TEXT_SIZE_X * msgoffset.2, 0  : mes msg_Time.isEng.nowTrain, 1
+        if ( isBold.eTime.nowTrain ) : rgbcolor imsg_Time.nowTrain : pos TEXT_SIZE_X * msgoffset.2 +1, 0  : mes msg_Time.isEng.nowTrain, 1
+
+        rgbcolor imsg_Cars.nowTrain : pos TEXT_SIZE_X * msgoffset.3, 0  : mes msg_Cars.isEng.nowTrain, 1
+        if ( isBold.eCars.nowTrain ) : rgbcolor imsg_Cars.nowTrain : pos TEXT_SIZE_X * msgoffset.3 +1, 0  : mes msg_Cars.isEng.nowTrain, 1
+
+        if ( isApproachingView ) : rgbcolor imsg_Approaching : pos 0, TEXT_SIZE_Y : mes msg_Approaching.isEng, 1
+
+        if ( isTrainmsg ) {
+
+            pos 0-roll, TEXT_SIZE_Y
+
+            rgbcolor imsg_thistrainmsg.nowTrain
+            mes msg_thistrainmsg.nowTrain, 1
+
+            if ( ( cnt \ 2 ) == 0 ) : roll ++
+
+            if ( roll >= ginfo_mesx ) : isTrainmsg = 0
+
+        }
+
+        if ( isMsg ) {
+
+            pos 0-roll, TEXT_SIZE_Y
+
+            rgbcolor imsg_msg.nowMsg
+            mes msg_msg.nowMsg, 1
+
+            if ( ( cnt \ 2 ) == 0 ) : roll ++
+
+            if ( roll >= ginfo_mesx ) : isMsg = 0
+
+        }
+        
+        if ( isCanview2nd ) {
+
+            if ( ( nowTrain ) != entry -1 ) {
+
+                rgbcolor imsg_Type.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.0, TEXT_SIZE_Y  : mes msg_Type.isEng.(nowTrain+1), 1
+                if ( isBold.eType.(nowTrain+1) ) : rgbcolor imsg_Type.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.0 +1, TEXT_SIZE_Y  : mes msg_Type.isEng.(nowTrain+1), 1
+
+                rgbcolor imsg_For.(nowTrain+1)  : pos TEXT_SIZE_X * msgoffset.1, TEXT_SIZE_Y  : mes msg_For.isEng.(nowTrain+1), 1
+                if ( isBold.eFor.(nowTrain+1) ) : rgbcolor imsg_For.(nowTrain+1)  : pos TEXT_SIZE_X * msgoffset.1 +1, TEXT_SIZE_Y  : mes msg_For.isEng.(nowTrain+1), 1
+
+                rgbcolor imsg_Time.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.2, TEXT_SIZE_Y  : mes msg_Time.isEng.(nowTrain+1), 1
+                if ( isBold.eTime.(nowTrain+1) ) : rgbcolor imsg_Time.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.2 +1, TEXT_SIZE_Y  : mes msg_Time.isEng.(nowTrain+1), 1
+
+                rgbcolor imsg_Cars.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.3, TEXT_SIZE_Y  : mes msg_Cars.isEng.(nowTrain+1), 1
+                if ( isBold.eCars.(nowTrain+1) ) : rgbcolor imsg_Cars.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.3 +1, TEXT_SIZE_Y  : mes msg_Cars.isEng.(nowTrain+1), 1
+
+            }
+
+        }
+
+        redraw 1
+
+        gsel 1
+        gzoom (TEXT_SIZE_X*TEXT_LENGTH+OFFSET_X)*SCREEN_MUL, (TEXT_SIZE_Y*TEXT_LINE+OFFSET_Y)*SCREEN_MUL, 0, 0, 0, TEXT_SIZE_X*TEXT_LENGTH+OFFSET_X, TEXT_SIZE_Y*TEXT_LINE+OFFSET_Y, 0
+
+        if ( ( cnt \ 300 ) == 1 ) {
+
+            if ( isEng ) {
+
+                isEng = 0
+
+            } else {
+
+                isEng = 1
+
+            }
+
+        }
+
+        if ( ( ( cnt \ 50 ) == 1 ) and ( isApproaching ) ){
+
+            if ( isApproachingView ) {
+
+                isApproachingView = 0
+
+            } else {
+
+                isApproachingView = 1
+
+            }
+
+        }
+
+        await 10
+
+    loop
+
+*l_approaching_true
+
+    isApproaching = 1
+    isTrainmsg = 0
+    isMsg = 0
+    isApproachingView = 0
+
+    return
+
+*l_approaching_false
+
+    isApproaching = 0
+    isApproachingView = 0
+
+    return
+
+*l_msg
+
+    if ( isApproaching ) : return
+
+    isMsg = 1
+    isTrainmsg = 0
+    roll = ( TEXT_SIZE_X * TEXT_LENGTH + OFFSET_X ) *-1
+
+    return
+
+*l_trainmsg
+
+    if ( isApproaching ) : return
+
+    isTrainmsg = 1
+    isMsg = 0
+    roll = ( TEXT_SIZE_X * TEXT_LENGTH + OFFSET_X ) *-1
+    return
+
+*l_next
+
+    if ( ( nowTrain ) == entry -1 ) : return
+
+    nowTrain ++
+
+    return
+
+*l_prev
+
+    if ( nowTrain == 0 ) : return
+
+    nowTrain --
+
+    return
+
+*l_nextmsg
+
+    if ( ( nowMsg ) == msgEntry -1 ) : return
+
+    nowMsg ++
+
+    return
+
+*l_prevmsg
+
+    if ( nowMsg == 0 ) : return
+
+    nowMsg --
+
+    return
+
+*l_save
+    bmpsave "pic"+ gettime(0) +"-"+ gettime(1) +"-"+ gettime(3) +"-"+ gettime(4) +"-"+ gettime(5) +"-"+ gettime(6) +".bmp"
+
+    return

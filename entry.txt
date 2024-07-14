@@ -1,0 +1,66 @@
+// 文字コードは UTF-8
+
+entrycount=2
+
+msg_Type.j.0="快速"
+msg_For.j.0="新 桜 台"
+msg_Time.j.0="１４:０２"
+msg_Cars.j.0="３両"
+
+msg_Type.e.0="Rapid"
+msg_For.e.0="Shin-Sakuradai"
+msg_Time.e.0="１４:０２"
+msg_Cars.e.0="３Cars"
+
+msg_thistrainmsg.0="この電車は、終点 新桜台まで、先に到着いたします。"
+imsg_thistrainmsg.0=$00FF00
+
+imsg_Type.0=$00FF00
+imsg_For.0=$FF7F00
+imsg_Time.0=$FF7F00
+imsg_Cars.0=$00FF00
+
+isBold.Type.0=0
+isBold.For.0=0
+isBold.Time.0=1
+isBold.Cars.0=0
+
+msg_Type.j.1=""
+msg_For.j.1="通  過"
+msg_Time.j.1=""
+msg_Cars.j.1=""
+
+msg_Type.e.1=""
+msg_For.e.1="Through Train"
+msg_Time.e.1=""
+msg_Cars.e.1=""
+
+msg_thistrainmsg.1="電車が通過する際は、黄色い点字ブロックの後ろまでお下がりください。"
+imsg_thistrainmsg.1=$FF7F00
+
+imsg_Type.1=$0
+imsg_For.1=$FF0000
+imsg_Time.1=$0
+imsg_Cars.1=$0
+
+isBold.Type.1=0
+isBold.For.1=0
+isBold.Time.1=0
+isBold.Cars.1=0
+
+msg_Approaching.j="電車がまいります　ご注意ください。"
+msg_Approaching.e="Train Approaching."
+imsg_Approaching=$FF0000
+
+msgentrycount=2
+
+msg_msg.0="電車が到着する際は、黄色い点字ブロックの後ろまで、下がってお待ちください。"
+msg_msg.1="本日も、高浜電気鉄道をご利用いただきまして、誠にありがとうございます。"
+
+imsg_msg.0=$00FF00
+imsg_msg.1=$00FF00
+
+offset.Type=0
+offset.For=6
+offset.Time=20
+offset.Cars=30
