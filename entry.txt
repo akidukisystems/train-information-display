@@ -1,66 +1,91 @@
 // 文字コードは UTF-8
 
-entrycount=2
+entrycount=3
 
 msg_Type.j.0="快速"
-msg_For.j.0="新 桜 台"
+msg_For.j.0="舞  鶴"
 msg_Time.j.0="１４:０２"
-msg_Cars.j.0="３両"
+msg_Cars.j.0="４両"
 
 msg_Type.e.0="Rapid"
-msg_For.e.0="Shin-Sakuradai"
+msg_For.e.0="Maitsuru"
 msg_Time.e.0="１４:０２"
-msg_Cars.e.0="３Cars"
+msg_Cars.e.0="４Cars"
 
-msg_thistrainmsg.0="この電車は、終点 新桜台まで、先に到着いたします。"
+msg_thistrainmsg.0="この電車は、あざみ野 で、準急 高宮行きにお乗換えができます。"
 imsg_thistrainmsg.0=$00FF00
 
 imsg_Type.0=$00FF00
 imsg_For.0=$FF7F00
-imsg_Time.0=$FF7F00
-imsg_Cars.0=$00FF00
+imsg_Time.0=$00FF00
+imsg_Cars.0=$FF7F00
 
 isBold.Type.0=0
 isBold.For.0=0
 isBold.Time.0=1
 isBold.Cars.0=0
 
-msg_Type.j.1=""
-msg_For.j.1="通  過"
-msg_Time.j.1=""
-msg_Cars.j.1=""
+msg_Type.j.1="特急"
+msg_For.j.1="あおば 5号 高宮"
+msg_Time.j.1="１４:２８"
+msg_Cars.j.1="４両"
 
-msg_Type.e.1=""
-msg_For.e.1="Through Train"
-msg_Time.e.1=""
-msg_Cars.e.1=""
+msg_Type.e.1="Ltd.Exp."
+msg_For.e.1="Takamiya"
+msg_Time.e.1="１４:２８"
+msg_Cars.e.1="４Cars"
 
-msg_thistrainmsg.1="電車が通過する際は、黄色い点字ブロックの後ろまでお下がりください。"
-imsg_thistrainmsg.1=$FF7F00
+msg_thistrainmsg.1="特急列車のご利用には、乗車券のほかに特急券が必要です。"
+imsg_thistrainmsg.1=$00FF00
 
-imsg_Type.1=$0
+imsg_Type.1=$FF0000
 imsg_For.1=$FF0000
-imsg_Time.1=$0
-imsg_Cars.1=$0
+imsg_Time.1=$00FF00
+imsg_Cars.1=$FF7F00
 
 isBold.Type.1=0
 isBold.For.1=0
-isBold.Time.1=0
+isBold.Time.1=1
 isBold.Cars.1=0
+
+msg_Type.j.2="準急"
+msg_For.j.2="(高浜本線) 高宮"
+msg_Time.j.2="１４:３５"
+msg_Cars.j.2="４両"
+
+msg_Type.e.2="Semi.Exp."
+msg_For.e.2="Takamiya"
+msg_Time.e.2="１４:３５"
+msg_Cars.e.2="４Cars"
+
+msg_thistrainmsg.2="特急列車のご利用には、乗車券のほかに特急券が必要です。"
+imsg_thistrainmsg.2=$00FF00
+
+imsg_Type.2=$FF7F00
+imsg_For.2=$00FF00
+imsg_Time.2=$00FF00
+imsg_Cars.2=$FF7F00
+
+isBold.Type.2=0
+isBold.For.2=0
+isBold.Time.2=1
+isBold.Cars.2=0
 
 msg_Approaching.j="電車がまいります　ご注意ください。"
 msg_Approaching.e="Train Approaching."
 imsg_Approaching=$FF0000
 
-msgentrycount=2
+msgentrycount=3
 
 msg_msg.0="電車が到着する際は、黄色い点字ブロックの後ろまで、下がってお待ちください。"
 msg_msg.1="本日も、高浜電気鉄道をご利用いただきまして、誠にありがとうございます。"
+msg_msg.2="【常陽鉄道線 運転見合わせ Jōyō tetsudō Line Operation Suspended】常陽鉄道線は、高宮～蕨駅間での踏切支障の影響により、全線で運転を見合わせております。高浜電気鉄道で振替輸送を行っております。"
 
 imsg_msg.0=$00FF00
 imsg_msg.1=$00FF00
+imsg_msg.2=$FF7F00
 
 offset.Type=0
-offset.For=6
-offset.Time=20
-offset.Cars=30
+offset.For=9
+offset.Time=24
+offset.Cars=34
