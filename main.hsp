@@ -1,6 +1,7 @@
     #include "cfg.as"
     #include "hsp3utf.as"
 
+    // 画面サイズ指定
     #define     TEXT_SIZE_X     8
     #define     TEXT_SIZE_Y     16
     #define     TEXT_LENGTH     40
@@ -14,20 +15,24 @@
     screen 1, (TEXT_SIZE_X*TEXT_LENGTH+OFFSET_X)*SCREEN_MUL, (TEXT_SIZE_Y*TEXT_LINE+OFFSET_Y)*SCREEN_MUL
 
     
-
+    // ボタンサイズ指定
     #define     BTN_SIZE_X      128
     #define     BTN_SIZE_Y      32
     #define     BTN_MUL         2
     #define     SPACE           20
 
+    // 配列で使う定数
     #enum   eType = 0
     #enum   eFor 
     #enum   eTime
     #enum   eCars
 
+    // 日本語/英語
     #define j 0
     #define e 1
 
+    // 2行目を描画するかの判定に使う
+    // 列車が接近してない、列車接近メッセージが表示されていない、メッセージが表示されていない
     #define isCanview2nd ( ( isApproaching == 0 ) and ( isTrainmsg == 0 ) and ( isMsg == 0 ) )
 
 
@@ -73,7 +78,7 @@
 
     font "MS Gothic", 16
 
-
+    // 初期化
 
     entry = 0
 
@@ -119,8 +124,11 @@
     isEng = 0
     nowMsg = 0
 
+    // 読み込み
+
     repeat entry
 
+        // 整合性を保つために 空で埋める
         msg_Type.j.cnt          = ""
         msg_For.j.cnt           = ""
         msg_Time.j.cnt          = ""
@@ -210,10 +218,11 @@
 
     repeat
 
-        gsel 0
+        gsel 0  ;コピー元画面
         redraw 0
         color : boxf
 
+        // 種別・行先・時刻・両数　点滅動作
         if ( ( isBlinking and isBlink.eType.nowTrain ) == 0 ) {
 
             rgbcolor imsg_Type.nowTrain : pos TEXT_SIZE_X * msgoffset.0, 0  : mes msg_Type.isEng.nowTrain, 1
@@ -242,10 +251,13 @@
 
         }
 
+        // 列車接近メッセージ　点滅動作
         if ( isApproachingView ) : rgbcolor imsg_Approaching : pos 0, TEXT_SIZE_Y : mes msg_Approaching.isEng, 1
 
+        // 列車メッセージスクロール
         if ( isTrainmsg ) {
 
+            // 右から左へ流す
             pos 0-roll, TEXT_SIZE_Y
 
             rgbcolor imsg_thistrainmsg.nowTrain
@@ -253,12 +265,15 @@
 
             if ( ( cnt \ 2 ) == 0 ) : roll ++
 
+            // メッセージの右端が画面左端まで行ったら終了
             if ( roll >= ginfo_mesx ) : isTrainmsg = 0
 
         }
 
+        // メッセージスクロール
         if ( isMsg ) {
 
+            // 右から左へ流す
             pos 0-roll, TEXT_SIZE_Y
 
             rgbcolor imsg_msg.nowMsg
@@ -266,12 +281,15 @@
 
             if ( ( cnt \ 2 ) == 0 ) : roll ++
 
+            // メッセージの右端が画面左端まで行ったら終了
             if ( roll >= ginfo_mesx ) : isMsg = 0
 
         }
         
+        // 2行目
         if ( isCanview2nd ) {
 
+            // エントリが最後まで行っていたら、なにも表示しない
             if ( ( nowTrain ) != entry -1 ) {
 
                 if ( ( isBlinking and isBlink.eType.(nowTrain+1) ) == 0 ) {
@@ -309,9 +327,12 @@
 
         redraw 1
 
+        // コピー
         gsel 1
         gzoom (TEXT_SIZE_X*TEXT_LENGTH+OFFSET_X)*SCREEN_MUL, (TEXT_SIZE_Y*TEXT_LINE+OFFSET_Y)*SCREEN_MUL, 0, 0, 0, TEXT_SIZE_X*TEXT_LENGTH+OFFSET_X, TEXT_SIZE_Y*TEXT_LINE+OFFSET_Y, 0
 
+
+        // 3秒ごとに日本語・英語切り替わり
         if ( ( cnt \ 300 ) == 1 ) {
 
             if ( isEng ) {
@@ -326,6 +347,7 @@
 
         }
 
+        // 列車接近メッセージ点滅制御　1秒周期の0.5秒間隔
         if ( ( ( cnt \ 50 ) == 1 ) and ( isApproaching ) ){
 
             if ( isApproachingView ) {
@@ -340,12 +362,14 @@
 
         }
 
+        // 種別・行先・時刻・両数　点滅動作　1秒ごとに滅
         if ( ( cnt \ 100 ) = 1 ) {
 
             isBlinking = 1
 
         }
 
+        // 種別・行先・時刻・両数　タイマ動作　滅から0.2秒で点
         if ( isBlinking ) {
 
             blinkTimer ++
@@ -364,6 +388,8 @@
 
 *l_approaching_true
 
+    // 列車接近セット
+    // メッセージ系削除
     isApproaching = 1
     isTrainmsg = 0
     isMsg = 0
@@ -373,6 +399,7 @@
 
 *l_approaching_false
 
+    // 列車接近リセット
     isApproaching = 0
     isApproachingView = 0
 
@@ -380,25 +407,31 @@
 
 *l_msg
 
+    // メッセージ表示
+    // 列車接近中はキャンセル
     if ( isApproaching ) : return
 
     isMsg = 1
     isTrainmsg = 0
-    roll = ( TEXT_SIZE_X * TEXT_LENGTH + OFFSET_X ) *-1
+    roll = ( TEXT_SIZE_X * TEXT_LENGTH + OFFSET_X ) *-1 ; 画面右端から始まるようにする
 
     return
 
 *l_trainmsg
 
+    // 列車メッセージ表示
+    // 列車接近中はキャンセル
     if ( isApproaching ) : return
 
     isTrainmsg = 1
     isMsg = 0
-    roll = ( TEXT_SIZE_X * TEXT_LENGTH + OFFSET_X ) *-1
+    roll = ( TEXT_SIZE_X * TEXT_LENGTH + OFFSET_X ) *-1 ; 画面右端から始まるようにする
     return
 
 *l_next
 
+    // 列車順送り
+    // 最後尾ならキャンセル
     if ( ( nowTrain ) == entry -1 ) : return
 
     nowTrain ++
@@ -407,6 +440,8 @@
 
 *l_prev
 
+    // 列車戻し
+    // 先頭ならキャンセル
     if ( nowTrain == 0 ) : return
 
     nowTrain --
@@ -415,6 +450,8 @@
 
 *l_nextmsg
 
+    // メッセージ順送り
+    // 最後尾ならキャンセル
     if ( ( nowMsg ) == msgEntry -1 ) : return
 
     nowMsg ++
@@ -423,6 +460,8 @@
 
 *l_prevmsg
 
+    // メッセージ戻し
+    // 先頭ならキャンセル
     if ( nowMsg == 0 ) : return
 
     nowMsg --
@@ -430,6 +469,7 @@
     return
 
 *l_save
+
     bmpsave "pic"+ gettime(0) +"-"+ gettime(1) +"-"+ gettime(3) +"-"+ gettime(4) +"-"+ gettime(5) +"-"+ gettime(6) +".bmp"
 
     return
