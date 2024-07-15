@@ -1,30 +1,43 @@
 // 文字コードは UTF-8
 
+// 列車情報のエントリ数
 entrycount=3
 
+// 種別・行先・時刻・両数の日本語
 msg_Type.j.0="快速"
 msg_For.j.0="舞  鶴"
 msg_Time.j.0="１４:０２"
 msg_Cars.j.0="４両"
 
+// 種別・行先・時刻・両数の英語
 msg_Type.e.0="Rapid"
 msg_For.e.0="Maitsuru"
 msg_Time.e.0="１４:０２"
 msg_Cars.e.0="４Cars"
 
+// 列車メッセージと文字色（16進数）
 msg_thistrainmsg.0="この電車は、あざみ野 で、準急 高宮行きにお乗換えができます。"
 imsg_thistrainmsg.0=$00FF00
 
+// 種別・行先・時刻・両数の文字色（16進数）
 imsg_Type.0=$00FF00
 imsg_For.0=$FF7F00
 imsg_Time.0=$00FF00
 imsg_Cars.0=$FF7F00
 
+// 種別・行先・時刻・両数を太字にするか（0=普通 1=太字）
 isBold.Type.0=0
 isBold.For.0=0
 isBold.Time.0=1
 isBold.Cars.0=0
 
+// 種別・行先・時刻・両数を点滅させるか（0=普通 1=点滅）
+isBlink.Type.0=0
+isBlink.For.0=0
+isBlink.Time.0=0
+isBlink.Cars.0=1
+
+// 以下同様
 msg_Type.j.1="特急"
 msg_For.j.1="あおば 5号 高宮"
 msg_Time.j.1="１４:２８"
@@ -48,8 +61,13 @@ isBold.For.1=0
 isBold.Time.1=1
 isBold.Cars.1=0
 
+isBlink.Type.1=0
+isBlink.For.1=0
+isBlink.Time.1=0
+isBlink.Cars.1=0
+
 msg_Type.j.2="準急"
-msg_For.j.2="(高浜本線) 高宮"
+msg_For.j.2="（高浜本線） 高宮"
 msg_Time.j.2="１４:３５"
 msg_Cars.j.2="４両"
 
@@ -71,20 +89,32 @@ isBold.For.2=0
 isBold.Time.2=1
 isBold.Cars.2=0
 
+isBlink.Type.2=0
+isBlink.For.2=0
+isBlink.Time.2=0
+isBlink.Cars.2=0
+
+
+
+// 列車接近メッセージと文字色
 msg_Approaching.j="電車がまいります　ご注意ください。"
 msg_Approaching.e="Train Approaching."
 imsg_Approaching=$FF0000
 
+// メッセージのエントリ数
 msgentrycount=3
 
+// メッセージ
 msg_msg.0="電車が到着する際は、黄色い点字ブロックの後ろまで、下がってお待ちください。"
 msg_msg.1="本日も、高浜電気鉄道をご利用いただきまして、誠にありがとうございます。"
 msg_msg.2="【常陽鉄道線 運転見合わせ Jōyō tetsudō Line Operation Suspended】常陽鉄道線は、高宮～蕨駅間での踏切支障の影響により、全線で運転を見合わせております。高浜電気鉄道で振替輸送を行っております。"
 
+// メッセージの文字色
 imsg_msg.0=$00FF00
 imsg_msg.1=$00FF00
 imsg_msg.2=$FF7F00
 
+// 種別・行先・時刻・両数をどこに配置するか（半角文字数で指定）
 offset.Type=0
 offset.For=9
 offset.Time=24

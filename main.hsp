@@ -1,4 +1,3 @@
-
     #include "cfg.as"
     #include "hsp3utf.as"
 
@@ -11,6 +10,7 @@
     #define     OFFSET_Y        1
 
     screen 0, TEXT_SIZE_X*TEXT_LENGTH+OFFSET_X, TEXT_SIZE_Y*TEXT_LINE+OFFSET_Y
+
     screen 1, (TEXT_SIZE_X*TEXT_LENGTH+OFFSET_X)*SCREEN_MUL, (TEXT_SIZE_Y*TEXT_LINE+OFFSET_Y)*SCREEN_MUL
 
     
@@ -25,7 +25,16 @@
     #enum   eTime
     #enum   eCars
 
+    #define j 0
+    #define e 1
+
+    #define isCanview2nd ( ( isApproaching == 0 ) and ( isTrainmsg == 0 ) and ( isMsg == 0 ) )
+
+
+
     screen 2, BTN_SIZE_X *BTN_MUL *2, 480
+
+    mes "ãNìÆíÜÇ≈Ç∑Å@ÇµÇŒÇÁÇ≠Ç®ë“ÇøÇ≠ÇæÇ≥Ç¢"
 
     font "MS Gothic", 26
     objmode 2
@@ -58,14 +67,13 @@
 
     button gosub "âÊñ Çï€ë∂", *l_save
 
+
+
     gsel 1
 
     font "MS Gothic", 16
 
-    #define j 0
-    #define e 1
 
-    #define isCanview2nd ( ( isApproaching == 0 ) and ( isTrainmsg == 0 ) and ( isMsg == 0 ) )
 
     entry = 0
 
@@ -86,6 +94,7 @@
     dim imsg_Cars, entry
 
     dim isBold, 4, entry
+    dim isBlink, 4, entry
 
     dim imsg_thistrainmsg, entry
 
@@ -99,7 +108,46 @@
 
     imsg_Approaching = $FF0000
 
+    dim msgoffset, 4
+    isBlinking = 0
+    isApproachingView = 0
+    isTrainmsg = 0
+    roll = 0
+    isMsg = 0
+    isApproaching = 0
+    nowTrain = 0
+    isEng = 0
+    nowMsg = 0
+
     repeat entry
+
+        msg_Type.j.cnt          = ""
+        msg_For.j.cnt           = ""
+        msg_Time.j.cnt          = ""
+        msg_Cars.j.cnt          = ""
+
+        msg_Type.e.cnt          = ""
+        msg_For.e.cnt           = ""
+        msg_Time.e.cnt          = ""
+        msg_Cars.e.cnt          = ""
+
+        msg_thistrainmsg.cnt    = ""
+        imsg_thistrainmsg.cnt   = 0
+
+        imsg_Type.cnt           = 0
+        imsg_For.cnt            = 0
+        imsg_Time.cnt           = 0
+        imsg_Cars.cnt           = 0
+
+        isBold.eType.cnt        = 0
+        isBold.eFor.cnt         = 0
+        isBold.eTime.cnt        = 0
+        isBold.eCars.cnt        = 0
+
+        isBlink.eType.cnt       = 0
+        isBlink.eFor.cnt        = 0
+        isBlink.eTime.cnt       = 0
+        isBlink.eCars.cnt       = 0
 
         cfgAS_read "msg_Type.j."+ cnt +"", msg_Type.j.cnt
         cfgAS_read "msg_For.j."+ cnt +"", msg_For.j.cnt
@@ -123,6 +171,11 @@
         cfgAS_read "isBold.For."+ cnt +"", isBold.eFor.cnt
         cfgAS_read "isBold.Time."+ cnt +"", isBold.eTime.cnt
         cfgAS_read "isBold.Cars."+ cnt +"", isBold.eCars.cnt
+
+        cfgAS_read "isBlink.Type."+ cnt +"", isBlink.eType.cnt
+        cfgAS_read "isBlink.For."+ cnt +"", isBlink.eFor.cnt
+        cfgAS_read "isBlink.Time."+ cnt +"", isBlink.eTime.cnt
+        cfgAS_read "isBlink.Cars."+ cnt +"", isBlink.eCars.cnt
 
     loop
 
@@ -150,6 +203,8 @@
 
     imsg_Approaching = $FF0000
 
+
+
     gsel 0
     font "MS Gothic", 16
 
@@ -159,17 +214,33 @@
         redraw 0
         color : boxf
 
-        rgbcolor imsg_Type.nowTrain : pos TEXT_SIZE_X * msgoffset.0, 0  : mes msg_Type.isEng.nowTrain, 1
-        if ( isBold.eType.nowTrain ) : rgbcolor imsg_Type.nowTrain : pos TEXT_SIZE_X * msgoffset.0 +1, 0  : mes msg_Type.isEng.nowTrain, 1
+        if ( ( isBlinking and isBlink.eType.nowTrain ) == 0 ) {
 
-        rgbcolor imsg_For.nowTrain  : pos TEXT_SIZE_X * msgoffset.1, 0  : mes msg_For.isEng.nowTrain, 1
-        if ( isBold.eFor.nowTrain ) : rgbcolor imsg_For.nowTrain  : pos TEXT_SIZE_X * msgoffset.1 +1, 0  : mes msg_For.isEng.nowTrain, 1
+            rgbcolor imsg_Type.nowTrain : pos TEXT_SIZE_X * msgoffset.0, 0  : mes msg_Type.isEng.nowTrain, 1
+            if ( isBold.eType.nowTrain ) : rgbcolor imsg_Type.nowTrain : pos TEXT_SIZE_X * msgoffset.0 +1, 0  : mes msg_Type.isEng.nowTrain, 1
 
-        rgbcolor imsg_Time.nowTrain : pos TEXT_SIZE_X * msgoffset.2, 0  : mes msg_Time.isEng.nowTrain, 1
-        if ( isBold.eTime.nowTrain ) : rgbcolor imsg_Time.nowTrain : pos TEXT_SIZE_X * msgoffset.2 +1, 0  : mes msg_Time.isEng.nowTrain, 1
+        }
 
-        rgbcolor imsg_Cars.nowTrain : pos TEXT_SIZE_X * msgoffset.3, 0  : mes msg_Cars.isEng.nowTrain, 1
-        if ( isBold.eCars.nowTrain ) : rgbcolor imsg_Cars.nowTrain : pos TEXT_SIZE_X * msgoffset.3 +1, 0  : mes msg_Cars.isEng.nowTrain, 1
+        if ( ( isBlinking and isBlink.eFor.nowTrain ) == 0 ) {
+
+            rgbcolor imsg_For.nowTrain  : pos TEXT_SIZE_X * msgoffset.1, 0  : mes msg_For.isEng.nowTrain, 1
+            if ( isBold.eFor.nowTrain ) : rgbcolor imsg_For.nowTrain  : pos TEXT_SIZE_X * msgoffset.1 +1, 0  : mes msg_For.isEng.nowTrain, 1
+
+        }
+
+        if ( ( isBlinking and isBlink.eTime.nowTrain ) == 0 ) {
+
+            rgbcolor imsg_Time.nowTrain : pos TEXT_SIZE_X * msgoffset.2, 0  : mes msg_Time.isEng.nowTrain, 1
+            if ( isBold.eTime.nowTrain ) : rgbcolor imsg_Time.nowTrain : pos TEXT_SIZE_X * msgoffset.2 +1, 0  : mes msg_Time.isEng.nowTrain, 1
+
+        }
+
+        if ( ( isBlinking and isBlink.eCars.nowTrain ) == 0 ) {
+
+            rgbcolor imsg_Cars.nowTrain : pos TEXT_SIZE_X * msgoffset.3, 0  : mes msg_Cars.isEng.nowTrain, 1
+            if ( isBold.eCars.nowTrain ) : rgbcolor imsg_Cars.nowTrain : pos TEXT_SIZE_X * msgoffset.3 +1, 0  : mes msg_Cars.isEng.nowTrain, 1
+
+        }
 
         if ( isApproachingView ) : rgbcolor imsg_Approaching : pos 0, TEXT_SIZE_Y : mes msg_Approaching.isEng, 1
 
@@ -203,18 +274,35 @@
 
             if ( ( nowTrain ) != entry -1 ) {
 
-                rgbcolor imsg_Type.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.0, TEXT_SIZE_Y  : mes msg_Type.isEng.(nowTrain+1), 1
-                if ( isBold.eType.(nowTrain+1) ) : rgbcolor imsg_Type.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.0 +1, TEXT_SIZE_Y  : mes msg_Type.isEng.(nowTrain+1), 1
+                if ( ( isBlinking and isBlink.eType.(nowTrain+1) ) == 0 ) {
 
-                rgbcolor imsg_For.(nowTrain+1)  : pos TEXT_SIZE_X * msgoffset.1, TEXT_SIZE_Y  : mes msg_For.isEng.(nowTrain+1), 1
-                if ( isBold.eFor.(nowTrain+1) ) : rgbcolor imsg_For.(nowTrain+1)  : pos TEXT_SIZE_X * msgoffset.1 +1, TEXT_SIZE_Y  : mes msg_For.isEng.(nowTrain+1), 1
-
-                rgbcolor imsg_Time.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.2, TEXT_SIZE_Y  : mes msg_Time.isEng.(nowTrain+1), 1
-                if ( isBold.eTime.(nowTrain+1) ) : rgbcolor imsg_Time.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.2 +1, TEXT_SIZE_Y  : mes msg_Time.isEng.(nowTrain+1), 1
-
-                rgbcolor imsg_Cars.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.3, TEXT_SIZE_Y  : mes msg_Cars.isEng.(nowTrain+1), 1
-                if ( isBold.eCars.(nowTrain+1) ) : rgbcolor imsg_Cars.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.3 +1, TEXT_SIZE_Y  : mes msg_Cars.isEng.(nowTrain+1), 1
-
+                    rgbcolor imsg_Type.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.0, TEXT_SIZE_Y  : mes msg_Type.isEng.(nowTrain+1), 1
+                    if ( isBold.eType.(nowTrain+1) ) : rgbcolor imsg_Type.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.0 +1, TEXT_SIZE_Y  : mes msg_Type.isEng.(nowTrain+1), 1
+        
+                }
+        
+                if ( ( isBlinking and isBlink.eFor.(nowTrain+1) ) == 0 ) {
+        
+                    rgbcolor imsg_For.(nowTrain+1)  : pos TEXT_SIZE_X * msgoffset.1, TEXT_SIZE_Y  : mes msg_For.isEng.(nowTrain+1), 1
+                    if ( isBold.eFor.(nowTrain+1) ) : rgbcolor imsg_For.(nowTrain+1)  : pos TEXT_SIZE_X * msgoffset.1 +1, TEXT_SIZE_Y  : mes msg_For.isEng.(nowTrain+1), 1
+        
+                }
+        
+                if ( ( isBlinking and isBlink.eTime.(nowTrain+1) ) == 0 ) {
+        
+                    rgbcolor imsg_Time.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.2, TEXT_SIZE_Y  : mes msg_Time.isEng.(nowTrain+1), 1
+                    if ( isBold.eTime.(nowTrain+1) ) : rgbcolor imsg_Time.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.2 +1, TEXT_SIZE_Y  : mes msg_Time.isEng.(nowTrain+1), 1
+        
+                }
+        
+                if ( ( isBlinking and isBlink.eCars.(nowTrain+1) ) == 0 ) {
+        
+                    rgbcolor imsg_Cars.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.3, TEXT_SIZE_Y  : mes msg_Cars.isEng.(nowTrain+1), 1
+                    if ( isBold.eCars.(nowTrain+1) ) : rgbcolor imsg_Cars.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.3 +1, TEXT_SIZE_Y  : mes msg_Cars.isEng.(nowTrain+1), 1
+    
+        
+                }
+  
             }
 
         }
@@ -247,6 +335,24 @@
             } else {
 
                 isApproachingView = 1
+
+            }
+
+        }
+
+        if ( ( cnt \ 100 ) = 1 ) {
+
+            isBlinking = 1
+
+        }
+
+        if ( isBlinking ) {
+
+            blinkTimer ++
+            if ( blinkTimer == 20 ) {
+
+                isBlinking = 0
+                blinkTimer = 0
 
             }
 
