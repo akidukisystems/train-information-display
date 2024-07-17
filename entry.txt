@@ -137,3 +137,16 @@ offset.Type=8
 offset.For=14
 offset.Time=28
 offset.Cars=38
+
+// 文字サイズ（x, y）
+screen.textsize.x=8
+screen.textsize.y=16
+
+// 1行に表示できる文字数
+screen.text.length=44
+
+// 行数
+screen.text.lines=3
+
+// 拡大倍率
+screen.mag=4
