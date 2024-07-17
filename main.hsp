@@ -11,9 +11,9 @@
     #define     OFFSET_X        0
     #define     OFFSET_Y        1
 
-    buffer 0, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y
+    buffer 0, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
 
-    screen 1, (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG
+    screen 1, (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 4
     title "スクリーン"
 
     
@@ -40,7 +40,8 @@
 
 
 
-    screen 2, BTN_SIZE_X *BTN_MUL *2, 480
+    screen 2, BTN_SIZE_X *BTN_MUL *2, 480, 4
+    title "操作ウインドウ"
 
 *reset
 
@@ -84,6 +85,9 @@
 
     pos 0, ginfo_cy + SPACE : button gosub "画面を保存", *l_save
     pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL : button gosub "リセット", *reset
+
+    objsize BTN_SIZE_X *BTN_MUL, BTN_SIZE_Y, 0
+    pos 0, ginfo_cy + SPACE : button gosub "このソフトについて", *l_author
 
 
     gsel 1
@@ -269,9 +273,9 @@
     cfgAS_read "screen.text.lines", text_line
     cfgAS_read "screen.mag", SCREEN_MAG
 
-    buffer 0, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y
+    buffer 0, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
 
-    screen 1, (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG
+    screen 1, (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 4
     title "スクリーン"
 
     imsg_Approaching = $FF0000
@@ -528,5 +532,11 @@
 *l_save
 
     bmpsave "pic"+ gettime(0) +"-"+ gettime(1) +"-"+ gettime(3) +"-"+ gettime(4) +"-"+ gettime(5) +"-"+ gettime(6) +".bmp"
+
+    return
+
+*l_author
+
+    dialog "製作：秋月\n\nこのソフトウエアを使用したことで生じた損害について、製作者はいかなる場合でも一切責任を負いません。\n\nCopyright (c) 2024 AkidukiSystems All Right Reserved.\n  www.akidukisystems.com"
 
     return

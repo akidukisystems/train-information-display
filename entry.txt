@@ -29,14 +29,14 @@ screen.text.lines=3
 screen.mag=4
 
 // 列車情報のエントリ数
-entrycount=3
+entrycount=4
 
 
 
 // 種別・行先・時刻・両数の日本語
 msg_Line.j.0="桜碧線"
 msg_Type.j.0="快速"
-msg_For.j.0="新桜台"
+msg_For.j.0="新 桜 台"
 msg_Time.j.0="１４:０２"
 msg_Cars.j.0="２両"
 
@@ -72,11 +72,13 @@ isBlink.For.0=0
 isBlink.Time.0=0
 isBlink.Cars.0=1
 
+
+
 // 以下同様
 msg_Line.j.1="特急"
 msg_Type.j.1="あおば"
 msg_For.j.1="5号 新桜台"
-msg_Time.j.1="１４:２８"
+msg_Time.j.1="１４:０８"
 msg_Cars.j.1="４両"
 
 msg_Line.e.1="Ltd.Exp."
@@ -106,10 +108,12 @@ isBlink.For.1=0
 isBlink.Time.1=0
 isBlink.Cars.1=0
 
+
+
 msg_Line.j.2="高浜本線"
 msg_Type.j.2=" 普通"
-msg_For.j.2="高 宮"
-msg_Time.j.2="１４:３５"
+msg_For.j.2="高  宮"
+msg_Time.j.2="１４:１２"
 msg_Cars.j.2="３両"
 
 msg_Line.e.2="[TA]"
@@ -139,8 +143,40 @@ isBlink.For.2=0
 isBlink.Time.2=0
 isBlink.Cars.2=0
 
-is2Line.Line.2=0
 
+
+msg_Line.j.3="桜碧線"
+msg_Type.j.3=" 準急"
+msg_For.j.3="あざみ野"
+msg_Time.j.3="１４:１６"
+msg_Cars.j.3="４両"
+
+msg_Line.e.3="[TO] Semi.Exp."
+msg_Type.e.3=""
+msg_For.e.3="Azamino"
+msg_Time.e.3="$"
+msg_Cars.e.3="４Cars"
+
+msg_thistrainmsg.3="この電車は、終点 あざみ野まで先に到着いたします。"
+imsg_thistrainmsg.3=$00FF00
+
+imsg_Line.3=$FF7F00
+imsg_Type.3=$FF7F00
+imsg_For.3=$00FF00
+imsg_Time.3=$00FF00
+imsg_Cars.3=$00FF00
+
+isBold.Line.3=0
+isBold.Type.3=0
+isBold.For.3=0
+isBold.Time.3=1
+isBold.Cars.3=0
+
+isBlink.Line.3=0
+isBlink.Type.3=0
+isBlink.For.3=0
+isBlink.Time.3=0
+isBlink.Cars.3=0
 
 
 // 列車接近メッセージと文字色
