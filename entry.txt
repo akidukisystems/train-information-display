@@ -4,95 +4,112 @@
 entrycount=3
 
 // 種別・行先・時刻・両数の日本語
+msg_Line.j.0="桜碧線"
 msg_Type.j.0="快速"
-msg_For.j.0="舞  鶴"
+msg_For.j.0="新桜台"
 msg_Time.j.0="１４:０２"
-msg_Cars.j.0="４両"
+msg_Cars.j.0="２両"
 
 // 種別・行先・時刻・両数の英語
+msg_Line.e.0="[TO]"
 msg_Type.e.0="Rapid"
-msg_For.e.0="Maitsuru"
+msg_For.e.0="Shin-Sakuradai"
 msg_Time.e.0="１４:０２"
-msg_Cars.e.0="４Cars"
+msg_Cars.e.0="２Cars"
 
 // 列車メッセージと文字色（16進数）
-msg_thistrainmsg.0="この電車は、あざみ野 で、準急 高宮行きにお乗換えができます。"
+msg_thistrainmsg.0="この電車は、あざみ野 で、準急 新桜台行きにお乗換えができます。"
 imsg_thistrainmsg.0=$00FF00
 
 // 種別・行先・時刻・両数の文字色（16進数）
+imsg_Line.0=$FF7F00
 imsg_Type.0=$00FF00
 imsg_For.0=$FF7F00
 imsg_Time.0=$00FF00
 imsg_Cars.0=$FF7F00
 
 // 種別・行先・時刻・両数を太字にするか（0=普通 1=太字）
+isBold.Line.0=0
 isBold.Type.0=0
 isBold.For.0=0
 isBold.Time.0=1
 isBold.Cars.0=0
 
 // 種別・行先・時刻・両数を点滅させるか（0=普通 1=点滅）
+isBlink.Line.0=0
 isBlink.Type.0=0
 isBlink.For.0=0
 isBlink.Time.0=0
 isBlink.Cars.0=1
 
 // 以下同様
-msg_Type.j.1="特急"
-msg_For.j.1="あおば 5号 高宮"
+msg_Line.j.1="特急"
+msg_Type.j.1="あおば"
+msg_For.j.1="5号 新桜台"
 msg_Time.j.1="１４:２８"
 msg_Cars.j.1="４両"
 
-msg_Type.e.1="Ltd.Exp."
-msg_For.e.1="Takamiya"
+msg_Line.e.1="Ltd.Exp."
+msg_Type.e.1=""
+msg_For.e.1="Shin-Sakuradai"
 msg_Time.e.1="１４:２８"
 msg_Cars.e.1="４Cars"
 
 msg_thistrainmsg.1="特急列車のご利用には、乗車券のほかに特急券が必要です。"
 imsg_thistrainmsg.1=$00FF00
 
+imsg_Line.1=$FF0000
 imsg_Type.1=$FF0000
 imsg_For.1=$FF0000
 imsg_Time.1=$00FF00
-imsg_Cars.1=$FF7F00
+imsg_Cars.1=$00FF00
 
+isBold.Line.1=0
 isBold.Type.1=0
 isBold.For.1=0
 isBold.Time.1=1
 isBold.Cars.1=0
 
+isBlink.Line.1=0
 isBlink.Type.1=0
 isBlink.For.1=0
 isBlink.Time.1=0
 isBlink.Cars.1=0
 
-msg_Type.j.2="準急"
-msg_For.j.2="（高浜本線） 高宮"
+msg_Line.j.2="高浜本線"
+msg_Type.j.2=" 普通"
+msg_For.j.2="高 宮"
 msg_Time.j.2="１４:３５"
-msg_Cars.j.2="４両"
+msg_Cars.j.2="３両"
 
-msg_Type.e.2="Semi.Exp."
+msg_Line.e.2="[TA]"
+msg_Type.e.2="Local"
 msg_For.e.2="Takamiya"
 msg_Time.e.2="１４:３５"
-msg_Cars.e.2="４Cars"
+msg_Cars.e.2="３Cars"
 
-msg_thistrainmsg.2="特急列車のご利用には、乗車券のほかに特急券が必要です。"
+msg_thistrainmsg.2="この電車は、終点 高宮まで先に到着いたします。"
 imsg_thistrainmsg.2=$00FF00
 
+imsg_Line.2=$00FF00
 imsg_Type.2=$FF7F00
 imsg_For.2=$00FF00
 imsg_Time.2=$00FF00
 imsg_Cars.2=$FF7F00
 
+isBold.Line.2=0
 isBold.Type.2=0
 isBold.For.2=0
 isBold.Time.2=1
 isBold.Cars.2=0
 
+isBlink.Line.2=1
 isBlink.Type.2=0
 isBlink.For.2=0
 isBlink.Time.2=0
 isBlink.Cars.2=0
+
+is2Line.Line.2=0
 
 
 
@@ -115,7 +132,8 @@ imsg_msg.1=$00FF00
 imsg_msg.2=$FF7F00
 
 // 種別・行先・時刻・両数をどこに配置するか（半角文字数で指定）
-offset.Type=0
-offset.For=9
-offset.Time=24
-offset.Cars=34
+offset.Line=0
+offset.Type=8
+offset.For=14
+offset.Time=28
+offset.Cars=38

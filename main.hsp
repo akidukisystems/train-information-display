@@ -2,11 +2,11 @@
     #include "hsp3utf.as"
 
     // 画面サイズ指定
-    #define     TEXT_SIZE_X     8
-    #define     TEXT_SIZE_Y     16
-    #define     TEXT_LENGTH     40
-    #define     TEXT_LINE       2
-    #define     SCREEN_MUL      4
+    TEXT_SIZE_X    = 8
+    TEXT_SIZE_Y    = 16
+    TEXT_LENGTH    = 44
+    TEXT_LINE      = 3
+    SCREEN_MUL     = 4
     #define     OFFSET_X        0
     #define     OFFSET_Y        1
 
@@ -22,7 +22,8 @@
     #define     SPACE           20
 
     // 配列で使う定数
-    #enum   eType = 0
+    #enum   eLine = 0
+    #enum   eType
     #enum   eFor 
     #enum   eTime
     #enum   eCars
@@ -38,6 +39,17 @@
 
 
     screen 2, BTN_SIZE_X *BTN_MUL *2, 480
+
+*reset
+
+    gsel 0
+    cls : pos 0, 0
+
+    gsel 1
+    cls : pos 0, 0
+
+    gsel 2
+    cls : pos 0, 0
 
     mes "起動中です　しばらくお待ちください"
 
@@ -66,12 +78,10 @@
     pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL : button gosub "列車メッセージ表示", *l_trainmsg
 
     pos 0, ginfo_cy + SPACE : button gosub "メッセージ順送り", *l_nextmsg
-    pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL :  : button gosub "メッセージ戻し", *l_prevmsg
+    pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL : button gosub "メッセージ戻し", *l_prevmsg
 
-    pos 0, ginfo_cy + SPACE
-
-    button gosub "画面を保存", *l_save
-
+    pos 0, ginfo_cy + SPACE : button gosub "画面を保存", *l_save
+    pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL : button gosub "リセット", *reset
 
 
     gsel 1
@@ -86,6 +96,7 @@
 
     cfgAS_read "entrycount", entry
 
+    sdim msg_Line, 64, 2, entry
     sdim msg_Type, 64, 2, entry
     sdim msg_For, 64, 2, entry
     sdim msg_Time, 64, 2, entry
@@ -93,13 +104,15 @@
 
     sdim msg_thistrainmsg, 64, entry
 
+    dim imsg_Line, entry
     dim imsg_Type, entry
     dim imsg_For, entry
     dim imsg_Time, entry
     dim imsg_Cars, entry
 
-    dim isBold, 4, entry
-    dim isBlink, 4, entry
+    dim isBold, 5, entry
+    dim isBlink, 5, entry
+    dim is2Line, 5, entry
 
     dim imsg_thistrainmsg, entry
 
@@ -113,7 +126,7 @@
 
     imsg_Approaching = $FF0000
 
-    dim msgoffset, 4
+    dim msgoffset, 5
     isBlinking = 0
     isApproachingView = 0
     isTrainmsg = 0
@@ -129,11 +142,13 @@
     repeat entry
 
         // 整合性を保つために 空で埋める
+        msg_Line.j.cnt          = ""
         msg_Type.j.cnt          = ""
         msg_For.j.cnt           = ""
         msg_Time.j.cnt          = ""
         msg_Cars.j.cnt          = ""
 
+        msg_Line.e.cnt          = ""
         msg_Type.e.cnt          = ""
         msg_For.e.cnt           = ""
         msg_Time.e.cnt          = ""
@@ -142,26 +157,37 @@
         msg_thistrainmsg.cnt    = ""
         imsg_thistrainmsg.cnt   = 0
 
+        imsg_Line.cnt           = 0
         imsg_Type.cnt           = 0
         imsg_For.cnt            = 0
         imsg_Time.cnt           = 0
         imsg_Cars.cnt           = 0
 
+        isBold.eLine.cnt        = 0
         isBold.eType.cnt        = 0
         isBold.eFor.cnt         = 0
         isBold.eTime.cnt        = 0
         isBold.eCars.cnt        = 0
 
+        isBlink.eLine.cnt       = 0
         isBlink.eType.cnt       = 0
         isBlink.eFor.cnt        = 0
         isBlink.eTime.cnt       = 0
         isBlink.eCars.cnt       = 0
 
+        is2Line.eLine.cnt       = 0
+        is2Line.eType.cnt       = 0
+        is2Line.eFor.cnt        = 0
+        is2Line.eTime.cnt       = 0
+        is2Line.eCars.cnt       = 0
+
+        cfgAS_read "msg_Line.j."+ cnt +"", msg_Line.j.cnt
         cfgAS_read "msg_Type.j."+ cnt +"", msg_Type.j.cnt
         cfgAS_read "msg_For.j."+ cnt +"", msg_For.j.cnt
         cfgAS_read "msg_Time.j."+ cnt +"", msg_Time.j.cnt
         cfgAS_read "msg_Cars.j."+ cnt +"", msg_Cars.j.cnt
 
+        cfgAS_read "msg_Line.e."+ cnt +"", msg_Line.e.cnt
         cfgAS_read "msg_Type.e."+ cnt +"", msg_Type.e.cnt
         cfgAS_read "msg_For.e."+ cnt +"", msg_For.e.cnt
         cfgAS_read "msg_Time.e."+ cnt +"", msg_Time.e.cnt
@@ -170,20 +196,29 @@
         cfgAS_read "msg_thistrainmsg."+ cnt +"", msg_thistrainmsg.cnt
         cfgAS_read "imsg_thistrainmsg."+ cnt +"", imsg_thistrainmsg.cnt
 
+        cfgAS_read "imsg_Line."+ cnt +"", imsg_Line.cnt
         cfgAS_read "imsg_Type."+ cnt +"", imsg_Type.cnt
         cfgAS_read "imsg_For."+ cnt +"", imsg_For.cnt
         cfgAS_read "imsg_Time."+ cnt +"", imsg_Time.cnt
         cfgAS_read "imsg_Cars."+ cnt +"", imsg_Cars.cnt
 
+        cfgAS_read "isBold.Line."+ cnt +"", isBold.eLine.cnt
         cfgAS_read "isBold.Type."+ cnt +"", isBold.eType.cnt
         cfgAS_read "isBold.For."+ cnt +"", isBold.eFor.cnt
         cfgAS_read "isBold.Time."+ cnt +"", isBold.eTime.cnt
         cfgAS_read "isBold.Cars."+ cnt +"", isBold.eCars.cnt
 
+        cfgAS_read "isBlink.Line."+ cnt +"", isBlink.eLine.cnt
         cfgAS_read "isBlink.Type."+ cnt +"", isBlink.eType.cnt
         cfgAS_read "isBlink.For."+ cnt +"", isBlink.eFor.cnt
         cfgAS_read "isBlink.Time."+ cnt +"", isBlink.eTime.cnt
         cfgAS_read "isBlink.Cars."+ cnt +"", isBlink.eCars.cnt
+
+        cfgAS_read "is2Line.Line."+ cnt +"", is2Line.eLine.cnt
+        cfgAS_read "is2Line.Type."+ cnt +"", is2Line.eType.cnt
+        cfgAS_read "is2Line.For."+ cnt +"", is2Line.eFor.cnt
+        cfgAS_read "is2Line.Time."+ cnt +"", is2Line.eTime.cnt
+        cfgAS_read "is2Line.Cars."+ cnt +"", is2Line.eCars.cnt
 
     loop
 
@@ -204,119 +239,187 @@
 
     loop
 
-    cfgAS_read "offset.Type", msgoffset.0
-    cfgAS_read "offset.For", msgoffset.1
-    cfgAS_read "offset.Time", msgoffset.2
-    cfgAS_read "offset.Cars", msgoffset.3
+    cfgAS_read "offset.Line", msgoffset.eLine
+    cfgAS_read "offset.Type", msgoffset.eType
+    cfgAS_read "offset.For", msgoffset.eFor
+    cfgAS_read "offset.Time", msgoffset.eTime
+    cfgAS_read "offset.Cars", msgoffset.eCars
 
     imsg_Approaching = $FF0000
 
 
 
+    fontname = "MS Gothic"
+    fontsize = 16
+    
     gsel 0
-    font "MS Gothic", 16
+    font fontname, fontsize
+
+    nowTimer = 0
 
     repeat
 
         gsel 0  ;コピー元画面
-        redraw 0
+        ;redraw 0
         color : boxf
 
         // 種別・行先・時刻・両数　点滅動作
-        if ( ( isBlinking and isBlink.eType.nowTrain ) == 0 ) {
 
-            rgbcolor imsg_Type.nowTrain : pos TEXT_SIZE_X * msgoffset.0, 0  : mes msg_Type.isEng.nowTrain, 1
-            if ( isBold.eType.nowTrain ) : rgbcolor imsg_Type.nowTrain : pos TEXT_SIZE_X * msgoffset.0 +1, 0  : mes msg_Type.isEng.nowTrain, 1
+        repeat TEXT_LINE
 
-        }
+            isShiftingLine = 0
+            if ( ( isCanview2nd != 1 ) and ( cnt != 0 ) ) : isShiftingLine = 1
 
-        if ( ( isBlinking and isBlink.eFor.nowTrain ) == 0 ) {
+            if ( cnt == 1 ) {
 
-            rgbcolor imsg_For.nowTrain  : pos TEXT_SIZE_X * msgoffset.1, 0  : mes msg_For.isEng.nowTrain, 1
-            if ( isBold.eFor.nowTrain ) : rgbcolor imsg_For.nowTrain  : pos TEXT_SIZE_X * msgoffset.1 +1, 0  : mes msg_For.isEng.nowTrain, 1
+                // 列車接近メッセージ　点滅動作
+                if ( isApproachingView ) : rgbcolor imsg_Approaching : pos 0, TEXT_SIZE_Y : mes msg_Approaching.isEng, 1
 
-        }
+                // 列車メッセージスクロール
+                if ( isTrainmsg ) {
 
-        if ( ( isBlinking and isBlink.eTime.nowTrain ) == 0 ) {
+                    // 右から左へ流す
+                    pos 0-roll, TEXT_SIZE_Y
 
-            rgbcolor imsg_Time.nowTrain : pos TEXT_SIZE_X * msgoffset.2, 0  : mes msg_Time.isEng.nowTrain, 1
-            if ( isBold.eTime.nowTrain ) : rgbcolor imsg_Time.nowTrain : pos TEXT_SIZE_X * msgoffset.2 +1, 0  : mes msg_Time.isEng.nowTrain, 1
+                    rgbcolor imsg_thistrainmsg.nowTrain
+                    mes msg_thistrainmsg.nowTrain, 1
 
-        }
+                    if ( ( nowTimer \ 2 ) == 0 ) : roll ++
 
-        if ( ( isBlinking and isBlink.eCars.nowTrain ) == 0 ) {
+                    // メッセージの右端が画面左端まで行ったら終了
+                    if ( roll >= ginfo_mesx ) : isTrainmsg = 0
 
-            rgbcolor imsg_Cars.nowTrain : pos TEXT_SIZE_X * msgoffset.3, 0  : mes msg_Cars.isEng.nowTrain, 1
-            if ( isBold.eCars.nowTrain ) : rgbcolor imsg_Cars.nowTrain : pos TEXT_SIZE_X * msgoffset.3 +1, 0  : mes msg_Cars.isEng.nowTrain, 1
+                }
 
-        }
+                // メッセージスクロール
+                if ( isMsg ) {
 
-        // 列車接近メッセージ　点滅動作
-        if ( isApproachingView ) : rgbcolor imsg_Approaching : pos 0, TEXT_SIZE_Y : mes msg_Approaching.isEng, 1
+                    // 右から左へ流す
+                    pos 0-roll, TEXT_SIZE_Y
 
-        // 列車メッセージスクロール
-        if ( isTrainmsg ) {
+                    rgbcolor imsg_msg.nowMsg
+                    mes msg_msg.nowMsg, 1
 
-            // 右から左へ流す
-            pos 0-roll, TEXT_SIZE_Y
+                    if ( ( nowTimer \ 2 ) == 0 ) : roll ++
 
-            rgbcolor imsg_thistrainmsg.nowTrain
-            mes msg_thistrainmsg.nowTrain, 1
+                    // メッセージの右端が画面左端まで行ったら終了
+                    if ( roll >= ginfo_mesx ) : isMsg = 0
 
-            if ( ( cnt \ 2 ) == 0 ) : roll ++
+                }
 
-            // メッセージの右端が画面左端まで行ったら終了
-            if ( roll >= ginfo_mesx ) : isTrainmsg = 0
+            }
 
-        }
+            if ( ( isCanview2nd ) or ( cnt != 1 ) ) {
 
-        // メッセージスクロール
-        if ( isMsg ) {
+                if ( ( nowTrain +cnt -isShiftingLine ) < entry ) {
 
-            // 右から左へ流す
-            pos 0-roll, TEXT_SIZE_Y
+                    if ( is2Line.eLine.( nowTrain +cnt -isShiftingLine ) ) {
 
-            rgbcolor imsg_msg.nowMsg
-            mes msg_msg.nowMsg, 1
+                        font fontname, fontsize /2 
 
-            if ( ( cnt \ 2 ) == 0 ) : roll ++
+                        if ( ( isBlinking and isBlink.eLine.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
 
-            // メッセージの右端が画面左端まで行ったら終了
-            if ( roll >= ginfo_mesx ) : isMsg = 0
+                            rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine )
+                            pos TEXT_SIZE_X * msgoffset.eLine, TEXT_SIZE_Y *cnt: mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                            pos TEXT_SIZE_X * msgoffset.eLine, TEXT_SIZE_Y /2  : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
 
-        }
+                            if ( isBold.eLine.( nowTrain +cnt -isShiftingLine ) ) {
+                                
+                                rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine )
+                                pos TEXT_SIZE_X * msgoffset.eLine +1, TEXT_SIZE_Y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                                pos TEXT_SIZE_X * msgoffset.eLine +1, TEXT_SIZE_Y /2  : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                            }
+                
+                        }
+
+                        font fontname, fontsize
+
+                    } else {
+
+                        if ( ( isBlinking and isBlink.eLine.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
+
+                            rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos TEXT_SIZE_X * msgoffset.eLine, TEXT_SIZE_Y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                            if ( isBold.eLine.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos TEXT_SIZE_X * msgoffset.eLine +1, TEXT_SIZE_Y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                        }
+
+                    }
+
+                    if ( ( isBlinking and isBlink.eType.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
+
+                        rgbcolor imsg_Type.( nowTrain +cnt -isShiftingLine ) : pos TEXT_SIZE_X * msgoffset.eType, TEXT_SIZE_Y *cnt : mes msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                        if ( isBold.eType.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Type.( nowTrain +cnt -isShiftingLine ) : pos TEXT_SIZE_X * msgoffset.eType +1, TEXT_SIZE_Y *cnt : mes msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                    }
+
+                    if ( ( isBlinking and isBlink.eFor.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
+
+                        rgbcolor imsg_For.( nowTrain +cnt -isShiftingLine )  : pos TEXT_SIZE_X * msgoffset.eFor, TEXT_SIZE_Y *cnt : mes msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                        if ( isBold.eFor.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_For.( nowTrain +cnt -isShiftingLine )  : pos TEXT_SIZE_X * msgoffset.eFor +1, TEXT_SIZE_Y *cnt : mes msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                    }
+
+                    if ( ( isBlinking and isBlink.eTime.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
+
+                        rgbcolor imsg_Time.( nowTrain +cnt -isShiftingLine ) : pos TEXT_SIZE_X * msgoffset.eTime, TEXT_SIZE_Y *cnt : mes msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                        if ( isBold.eTime.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Time.( nowTrain +cnt -isShiftingLine ) : pos TEXT_SIZE_X * msgoffset.eTime +1, TEXT_SIZE_Y *cnt : mes msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                    }
+
+                    if ( ( isBlinking and isBlink.eCars.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
+
+                        rgbcolor imsg_Cars.( nowTrain +cnt -isShiftingLine ) : pos TEXT_SIZE_X * msgoffset.eCars, TEXT_SIZE_Y *cnt : mes msg_Cars.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                        if ( isBold.eCars.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Cars.( nowTrain +cnt -isShiftingLine ) : pos TEXT_SIZE_X * msgoffset.eCars +1, TEXT_SIZE_Y *cnt : mes msg_Cars.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                    }
+
+                }
+
+            }
+
+        loop
+
         
+        /*
         // 2行目
         if ( isCanview2nd ) {
 
             // エントリが最後まで行っていたら、なにも表示しない
             if ( ( nowTrain ) != entry -1 ) {
 
+                if ( ( isBlinking and isBlink.eLine.(nowTrain+1) ) == 0 ) {
+
+                    rgbcolor imsg_Line.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.eLine, TEXT_SIZE_Y  : mes msg_Line.isEng.(nowTrain+1), 1
+                    if ( isBold.eLine.(nowTrain+1) ) : rgbcolor imsg_Line.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.eLine +1, 0  : mes msg_Line.isEng.(nowTrain+1), 1
+        
+                }
+
                 if ( ( isBlinking and isBlink.eType.(nowTrain+1) ) == 0 ) {
 
-                    rgbcolor imsg_Type.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.0, TEXT_SIZE_Y  : mes msg_Type.isEng.(nowTrain+1), 1
-                    if ( isBold.eType.(nowTrain+1) ) : rgbcolor imsg_Type.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.0 +1, TEXT_SIZE_Y  : mes msg_Type.isEng.(nowTrain+1), 1
+                    rgbcolor imsg_Type.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.eType, TEXT_SIZE_Y  : mes msg_Type.isEng.(nowTrain+1), 1
+                    if ( isBold.eType.(nowTrain+1) ) : rgbcolor imsg_Type.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.eType +1, TEXT_SIZE_Y  : mes msg_Type.isEng.(nowTrain+1), 1
         
                 }
         
                 if ( ( isBlinking and isBlink.eFor.(nowTrain+1) ) == 0 ) {
         
-                    rgbcolor imsg_For.(nowTrain+1)  : pos TEXT_SIZE_X * msgoffset.1, TEXT_SIZE_Y  : mes msg_For.isEng.(nowTrain+1), 1
-                    if ( isBold.eFor.(nowTrain+1) ) : rgbcolor imsg_For.(nowTrain+1)  : pos TEXT_SIZE_X * msgoffset.1 +1, TEXT_SIZE_Y  : mes msg_For.isEng.(nowTrain+1), 1
+                    rgbcolor imsg_For.(nowTrain+1)  : pos TEXT_SIZE_X * msgoffset.eFor, TEXT_SIZE_Y  : mes msg_For.isEng.(nowTrain+1), 1
+                    if ( isBold.eFor.(nowTrain+1) ) : rgbcolor imsg_For.(nowTrain+1)  : pos TEXT_SIZE_X * msgoffset.eFor +1, TEXT_SIZE_Y  : mes msg_For.isEng.(nowTrain+1), 1
         
                 }
         
                 if ( ( isBlinking and isBlink.eTime.(nowTrain+1) ) == 0 ) {
         
-                    rgbcolor imsg_Time.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.2, TEXT_SIZE_Y  : mes msg_Time.isEng.(nowTrain+1), 1
-                    if ( isBold.eTime.(nowTrain+1) ) : rgbcolor imsg_Time.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.2 +1, TEXT_SIZE_Y  : mes msg_Time.isEng.(nowTrain+1), 1
+                    rgbcolor imsg_Time.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.eTime, TEXT_SIZE_Y  : mes msg_Time.isEng.(nowTrain+1), 1
+                    if ( isBold.eTime.(nowTrain+1) ) : rgbcolor imsg_Time.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.eTime +1, TEXT_SIZE_Y  : mes msg_Time.isEng.(nowTrain+1), 1
         
                 }
         
                 if ( ( isBlinking and isBlink.eCars.(nowTrain+1) ) == 0 ) {
         
-                    rgbcolor imsg_Cars.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.3, TEXT_SIZE_Y  : mes msg_Cars.isEng.(nowTrain+1), 1
-                    if ( isBold.eCars.(nowTrain+1) ) : rgbcolor imsg_Cars.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.3 +1, TEXT_SIZE_Y  : mes msg_Cars.isEng.(nowTrain+1), 1
+                    rgbcolor imsg_Cars.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.eCars, TEXT_SIZE_Y  : mes msg_Cars.isEng.(nowTrain+1), 1
+                    if ( isBold.eCars.(nowTrain+1) ) : rgbcolor imsg_Cars.(nowTrain+1) : pos TEXT_SIZE_X * msgoffset.eCars +1, TEXT_SIZE_Y  : mes msg_Cars.isEng.(nowTrain+1), 1
     
         
                 }
@@ -324,7 +427,7 @@
             }
 
         }
-
+*/
         redraw 1
 
         // コピー
@@ -333,7 +436,7 @@
 
 
         // 3秒ごとに日本語・英語切り替わり
-        if ( ( cnt \ 300 ) == 1 ) {
+        if ( ( cnt \ 500 ) == 1 ) {
 
             if ( isEng ) {
 
@@ -381,6 +484,8 @@
             }
 
         }
+
+        nowTimer ++
 
         await 10
 
