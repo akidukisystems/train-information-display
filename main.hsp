@@ -103,7 +103,7 @@
     cfgAS_read "escapestr", escapeStr
     cfgAS_read "font.name", fontname
     cfgAS_read "font.size", fontsize
-    
+
     cfgAS_read "entrycount", entry
 
     sdim msg_Line, 64, 2, entry
@@ -380,54 +380,6 @@
 
         loop
 
-        
-        /*
-        // 2行目
-        if ( isCanview2nd ) {
-
-            // エントリが最後まで行っていたら、なにも表示しない
-            if ( ( nowTrain ) != entry -1 ) {
-
-                if ( ( isBlinking and isBlink.eLine.(nowTrain+1) ) == 0 ) {
-
-                    rgbcolor imsg_Line.(nowTrain+1) : pos textsize_x * msgoffset.eLine, textsize_y  : mes msg_Line.isEng.(nowTrain+1), 1
-                    if ( isBold.eLine.(nowTrain+1) ) : rgbcolor imsg_Line.(nowTrain+1) : pos textsize_x * msgoffset.eLine +1, 0  : mes msg_Line.isEng.(nowTrain+1), 1
-        
-                }
-
-                if ( ( isBlinking and isBlink.eType.(nowTrain+1) ) == 0 ) {
-
-                    rgbcolor imsg_Type.(nowTrain+1) : pos textsize_x * msgoffset.eType, textsize_y  : mes msg_Type.isEng.(nowTrain+1), 1
-                    if ( isBold.eType.(nowTrain+1) ) : rgbcolor imsg_Type.(nowTrain+1) : pos textsize_x * msgoffset.eType +1, textsize_y  : mes msg_Type.isEng.(nowTrain+1), 1
-        
-                }
-        
-                if ( ( isBlinking and isBlink.eFor.(nowTrain+1) ) == 0 ) {
-        
-                    rgbcolor imsg_For.(nowTrain+1)  : pos textsize_x * msgoffset.eFor, textsize_y  : mes msg_For.isEng.(nowTrain+1), 1
-                    if ( isBold.eFor.(nowTrain+1) ) : rgbcolor imsg_For.(nowTrain+1)  : pos textsize_x * msgoffset.eFor +1, textsize_y  : mes msg_For.isEng.(nowTrain+1), 1
-        
-                }
-        
-                if ( ( isBlinking and isBlink.eTime.(nowTrain+1) ) == 0 ) {
-        
-                    rgbcolor imsg_Time.(nowTrain+1) : pos textsize_x * msgoffset.eTime, textsize_y  : mes msg_Time.isEng.(nowTrain+1), 1
-                    if ( isBold.eTime.(nowTrain+1) ) : rgbcolor imsg_Time.(nowTrain+1) : pos textsize_x * msgoffset.eTime +1, textsize_y  : mes msg_Time.isEng.(nowTrain+1), 1
-        
-                }
-        
-                if ( ( isBlinking and isBlink.eCars.(nowTrain+1) ) == 0 ) {
-        
-                    rgbcolor imsg_Cars.(nowTrain+1) : pos textsize_x * msgoffset.eCars, textsize_y  : mes msg_Cars.isEng.(nowTrain+1), 1
-                    if ( isBold.eCars.(nowTrain+1) ) : rgbcolor imsg_Cars.(nowTrain+1) : pos textsize_x * msgoffset.eCars +1, textsize_y  : mes msg_Cars.isEng.(nowTrain+1), 1
-    
-        
-                }
-  
-            }
-
-        }
-*/
         redraw 1
 
         // コピー
