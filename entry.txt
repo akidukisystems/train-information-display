@@ -1,7 +1,37 @@
 // 文字コードは UTF-8
 
+// エスケープ文字
+// こいつを種別・行先・時刻・両数の英語に指定すると、日本語の文字列と同じになる
+escapestr="$"
+
+// フォントとサイズ
+font.name="MS Gothic"
+font.size=16
+
+// 種別・行先・時刻・両数をどこに配置するか（半角文字数で指定）
+offset.Line=0
+offset.Type=8
+offset.For=14
+offset.Time=28
+offset.Cars=38
+
+// 文字サイズ（x, y）
+screen.textsize.x=8
+screen.textsize.y=16
+
+// 1行に表示できる文字数
+screen.text.length=44
+
+// 行数
+screen.text.lines=3
+
+// 拡大倍率
+screen.mag=4
+
 // 列車情報のエントリ数
 entrycount=3
+
+
 
 // 種別・行先・時刻・両数の日本語
 msg_Line.j.0="桜碧線"
@@ -14,7 +44,7 @@ msg_Cars.j.0="２両"
 msg_Line.e.0="[TO]"
 msg_Type.e.0="Rapid"
 msg_For.e.0="Shin-Sakuradai"
-msg_Time.e.0="１４:０２"
+msg_Time.e.0="$"
 msg_Cars.e.0="２Cars"
 
 // 列車メッセージと文字色（16進数）
@@ -52,7 +82,7 @@ msg_Cars.j.1="４両"
 msg_Line.e.1="Ltd.Exp."
 msg_Type.e.1=""
 msg_For.e.1="Shin-Sakuradai"
-msg_Time.e.1="１４:２８"
+msg_Time.e.1="$"
 msg_Cars.e.1="４Cars"
 
 msg_thistrainmsg.1="特急列車のご利用には、乗車券のほかに特急券が必要です。"
@@ -85,7 +115,7 @@ msg_Cars.j.2="３両"
 msg_Line.e.2="[TA]"
 msg_Type.e.2="Local"
 msg_For.e.2="Takamiya"
-msg_Time.e.2="１４:３５"
+msg_Time.e.2="$"
 msg_Cars.e.2="３Cars"
 
 msg_thistrainmsg.2="この電車は、終点 高宮まで先に到着いたします。"
@@ -130,23 +160,3 @@ msg_msg.2="【常陽鉄道線 運転見合わせ Jōyō tetsudō Line Operation 
 imsg_msg.0=$00FF00
 imsg_msg.1=$00FF00
 imsg_msg.2=$FF7F00
-
-// 種別・行先・時刻・両数をどこに配置するか（半角文字数で指定）
-offset.Line=0
-offset.Type=8
-offset.For=14
-offset.Time=28
-offset.Cars=38
-
-// 文字サイズ（x, y）
-screen.textsize.x=8
-screen.textsize.y=16
-
-// 1行に表示できる文字数
-screen.text.length=44
-
-// 行数
-screen.text.lines=3
-
-// 拡大倍率
-screen.mag=4

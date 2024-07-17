@@ -93,9 +93,17 @@
     // èâä˙âª
 
     entry = 0
+    escapeStr = "$"
+
+    fontname = "MS Gothic"
+    fontsize = 16
 
     cfgAS_init "entry.txt"
 
+    cfgAS_read "escapestr", escapeStr
+    cfgAS_read "font.name", fontname
+    cfgAS_read "font.size", fontsize
+    
     cfgAS_read "entrycount", entry
 
     sdim msg_Line, 64, 2, entry
@@ -195,6 +203,12 @@
         cfgAS_read "msg_Time.e."+ cnt +"", msg_Time.e.cnt
         cfgAS_read "msg_Cars.e."+ cnt +"", msg_Cars.e.cnt
 
+        if ( msg_Line.e.cnt == escapeStr ) : msg_Line.e.cnt = msg_Line.j.cnt
+        if ( msg_Type.e.cnt == escapeStr ) : msg_Type.e.cnt = msg_Type.j.cnt
+        if ( msg_For.e.cnt == escapeStr ) : msg_For.e.cnt = msg_For.j.cnt
+        if ( msg_Time.e.cnt == escapeStr ) : msg_Time.e.cnt = msg_Time.j.cnt
+        if ( msg_Cars.e.cnt == escapeStr ) : msg_Cars.e.cnt = msg_Cars.j.cnt
+
         cfgAS_read "msg_thistrainmsg."+ cnt +"", msg_thistrainmsg.cnt
         cfgAS_read "imsg_thistrainmsg."+ cnt +"", imsg_thistrainmsg.cnt
 
@@ -216,11 +230,13 @@
         cfgAS_read "isBlink.Time."+ cnt +"", isBlink.eTime.cnt
         cfgAS_read "isBlink.Cars."+ cnt +"", isBlink.eCars.cnt
 
+        /*
         cfgAS_read "is2Line.Line."+ cnt +"", is2Line.eLine.cnt
         cfgAS_read "is2Line.Type."+ cnt +"", is2Line.eType.cnt
         cfgAS_read "is2Line.For."+ cnt +"", is2Line.eFor.cnt
         cfgAS_read "is2Line.Time."+ cnt +"", is2Line.eTime.cnt
         cfgAS_read "is2Line.Cars."+ cnt +"", is2Line.eCars.cnt
+        */
 
     loop
 
@@ -261,9 +277,6 @@
     imsg_Approaching = $FF0000
 
 
-
-    fontname = "MS Gothic"
-    fontsize = 16
     
     gsel 0
     font fontname, fontsize
