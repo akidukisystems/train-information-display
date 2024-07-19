@@ -1,6 +1,7 @@
     #include "cfg.as"
     #include "hsp3utf.as"
     #include "msglib.as"
+    #include "hspda.as"
 
     // 画面サイズ指定
     textsize_x    = 8
@@ -32,6 +33,12 @@
     #define     BTN_MUL         2
     #define     SPACE           20
 
+    #uselib "user32.dll"
+    #func PostMessage "PostMessageA" int,int,int,int
+
+    #define     MSG_USER         0x0400
+    #define     MSG_LOADEDSMV   ( MSG_USER + 0x101 )
+
     // 配列で使う定数
     #enum   eLine = 0
     #enum   eType
@@ -59,6 +66,8 @@
 
 *reset
 
+    isChangedFile = 0
+
     gsel SCREEN_S
     cls : pos 0, 0
 
@@ -85,23 +94,23 @@
     pos 0, 0 : button gosub "列車接近セット", *l_approaching_true
     pos BTN_SIZE_X *BTN_MUL, 0 : button gosub "列車接近リセット", *l_approaching_false
 
-    objsize BTN_SIZE_X *BTN_MUL *2, BTN_SIZE_Y *BTN_MUL, 0
+    objsize BTN_SIZE_X *( 1.0 *BTN_MUL *1.5 ), BTN_SIZE_Y *BTN_MUL, 0
 
     pos 0, BTN_SIZE_Y *BTN_MUL : button gosub "列車順送り", *l_next
-
-    objsize BTN_SIZE_X, BTN_SIZE_Y, 0
 
     font "MS Gothic", 18
     objmode 2
 
-    button gosub "列車戻し", *l_prev
+    objsize BTN_SIZE_X, BTN_SIZE_Y *BTN_MUL, 0
+
+    pos BTN_SIZE_X *( 1.0 *BTN_MUL *1.5 ), BTN_SIZE_Y *BTN_MUL : button gosub "列車戻し", *l_prev
 
     objsize BTN_SIZE_X *BTN_MUL, BTN_SIZE_Y *BTN_MUL, 0
 
     pos 0, ginfo_cy + SPACE : button gosub "メッセージ表示", *l_msg
     pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL : button gosub "列車メッセージ表示", *l_trainmsg
 
-    pos 0, ginfo_cy + SPACE : button gosub "メッセージ順送り", *l_nextmsg
+    pos 0, ginfo_cy : button gosub "メッセージ順送り", *l_nextmsg
     pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL : button gosub "メッセージ戻し", *l_prevmsg
 
     pos 0, ginfo_cy + SPACE : button gosub "画面を保存", *l_save
@@ -111,6 +120,9 @@
     pos 0, ginfo_cy + SPACE : button gosub "このソフトについて", *l_author
     pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y : button gosub "別のファイルを読込む", *l_select
 
+    pos 0, ginfo_cy + SPACE : button gosub "SMVファイルを書込む", *l_smartview_write
+    pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y : button gosub "SMVファイルを読込む", *l_smartview_read
+
 
     gsel SCREEN_D
 
@@ -118,7 +130,7 @@
 
     // 初期化
 
-    isChangedFile = 0
+    oncmd goto *SMVloaded, MSG_LOADEDSMV
 
     entry = 0
     escapeStr = "$"
@@ -260,7 +272,7 @@
 
             if ( msg_thisTrainMsg.cnt.before_cnt == "$" ) : break
 
-            wait 1
+            await 1
 
         loop
 
@@ -284,7 +296,7 @@
 
         putmes_msglib "エントリ "+ cnt +" のデータを読込みました\n", SCREEN_LOG
 
-        wait 1
+        await 1
 
     loop
 
@@ -316,13 +328,11 @@
 
             if ( msg_msg.cnt.before_cnt == "$" ) : break
 
-            wait 1
+            await 1
             
         loop
 
         putmes_msglib "エントリ "+ cnt +" のデータを読込みました\n", SCREEN_LOG
-
-        wait 1
 
     loop
 
@@ -340,13 +350,14 @@
 
     putmes_msglib "スクリーン情報を読込みました\n", SCREEN_LOG
 
+    oncmd 0
+
+*SMVloaded
+
     buffer SCREEN_S, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
 
     screen SCREEN_D, (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 4
     title "スクリーン"
-
-    imsg_Approaching = $FF0000
-
 
     
     gsel SCREEN_S
@@ -413,7 +424,7 @@
 
                     loop
 
-                    if ( ( nowTimer \ 2 ) == 0 ) : roll ++
+                    if ( ( nowTimer \ 4 ) == 0 ) : roll ++
 
                     // メッセージの右端が画面左端まで行ったら終了
                     if ( roll >= msgsize ) : isTrainmsg = 0
@@ -453,7 +464,7 @@
 
                     loop
 
-                    if ( ( nowTimer \ 2 ) == 0 ) : roll ++
+                    if ( ( nowTimer \ 4 ) == 0 ) : roll ++
 
                     // メッセージの右端が画面左端まで行ったら終了
                     if ( roll >= msgsize ) : isMsg = 0
@@ -514,8 +525,8 @@
         gzoom (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 0, 0, 0, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 0
 
 
-        // 3秒ごとに日本語・英語切り替わり
-        if ( ( cnt \ 500 ) == 1 ) {
+        // 5秒ごとに日本語・英語切り替わり
+        if ( ( cnt \ 1000 ) == 1 ) {
 
             if ( isEng ) {
 
@@ -530,7 +541,7 @@
         }
 
         // 列車接近メッセージ点滅制御　1秒周期の0.5秒間隔
-        if ( ( ( cnt \ 50 ) == 1 ) and ( isApproaching ) ){
+        if ( ( ( cnt \ 100 ) == 1 ) and ( isApproaching ) ){
 
             if ( isApproachingView ) {
 
@@ -545,7 +556,7 @@
         }
 
         // 種別・行先・時刻・両数　点滅動作　1秒ごとに滅
-        if ( ( cnt \ 100 ) = 1 ) {
+        if ( ( cnt \ 200 ) = 1 ) {
 
             isBlinking = 1
 
@@ -555,7 +566,7 @@
         if ( isBlinking ) {
 
             blinkTimer ++
-            if ( blinkTimer == 20 ) {
+            if ( blinkTimer == 40 ) {
 
                 isBlinking = 0
                 blinkTimer = 0
@@ -566,7 +577,7 @@
 
         nowTimer ++
 
-        await 10
+        await 5
 
     loop
 
@@ -672,5 +683,25 @@
 
     isChangedFile = 1
     nowLoadingFile = refstr
+
+    return
+
+*l_smartview_write
+
+    vsave ""+ gettime(0) +"-"+ gettime(1) +"-"+ gettime(3) +"-"+ gettime(4) +"-"+ gettime(5) +"-"+ gettime(6) +".smv"
+
+    return
+
+*l_smartview_read
+
+    dialog "smv", 16, "スマートビューファイル"
+
+    if ( stat ) {
+
+        vload refstr
+
+        PostMessage hwnd, MSG_LOADEDSMV, 1, 100
+
+    }
 
     return

@@ -123,6 +123,8 @@ return 1
         noteget Var_ThisConfigLine, cnt
 
         if ( Var_ThisConfigLine == "" ) : continue
+        if ( instr( Var_ThisConfigLine, 0, "//" ) == 0 ) : continue
+        if ( instr( Var_ThisConfigLine, 0, ";" ) == 0 ) : continue
 
         splitEx Var_ThisConfigLine, Var_ThisConfigLineArray, '='
 
@@ -165,6 +167,8 @@ return 1
             swend   
 
         }
+
+        if ( ( cnt \ 10 ) == 0 ) : await 1
 
     loop
     noteunsel
