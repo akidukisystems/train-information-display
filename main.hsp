@@ -18,6 +18,7 @@
     #enum   SCREEN_CONTROL
     #enum   SCREEN_LOG
     #enum   SCREEN_DUMMY
+    #enum   SCREEN_CEL
 
     buffer SCREEN_S, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
 
@@ -200,6 +201,7 @@
     nowTrain = 0
     isEng = 0
     nowMsg = 0
+    celImagePath = ""
 
     putmes_msglib "変数を初期化しました\n", SCREEN_LOG
     putmes_msglib "読込むファイル：\""+ nowLoadingFile +"\"\n", SCREEN_LOG
@@ -348,6 +350,18 @@
     cfgAS_read "screen.text.lines", text_line
     cfgAS_read "screen.mag", SCREEN_MAG
 
+    cfgAS_read "celimage", celImagePath
+
+    if ( celImagePath != "" ) {
+
+        cfgAS_read "celsize.x", celSize_x
+        cfgAS_read "celsize.y", celSize_y
+
+        celload celImagePath, SCREEN_CEL, 0
+        celdiv SCREEN_CEL, celSize_x, celSize_y
+
+    }
+
     putmes_msglib "スクリーン情報を読込みました\n", SCREEN_LOG
 
     oncmd 0
@@ -479,9 +493,54 @@
 
                     if ( ( isBlinking and isBlink.eLine.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
 
-                        rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine, textsize_y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
-                        if ( isBold.eLine.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +1, textsize_y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                        if ( instr( msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
 
+                            rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine, textsize_y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                            if ( isBold.eLine.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +1, textsize_y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                        } else {
+
+                            sdim tmp
+                            split msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
+
+                            if ( tmp.0 != "" ) {
+
+                                rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine, textsize_y *cnt : mes tmp.0, 1
+                                if ( isBold.eLine.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +1, textsize_y *cnt : mes tmp.0, 1        
+
+                            }
+
+                            before_cnt = cnt
+                            msgPosShift = 0
+
+                            repeat length( tmp ) -1, 1
+
+                                pos textsize_x * msgoffset.eLine +msgPosShift, textsize_y *before_cnt
+                                celput SCREEN_CEL, int( strmid( tmp.cnt, 0, 2 ) )
+
+                                msgPosShift += celSize_x
+
+                                rgbcolor imsg_Line.( nowTrain +before_cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +msgPosShift , textsize_y *before_cnt : mes strmid( tmp.cnt, 2, strlen( tmp.cnt ) -2 ), 1
+                                if ( isBold.eLine.( nowTrain +before_cnt -isShiftingLine ) ) : rgbcolor imsg_Line.( nowTrain +before_cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +msgPosShift +1, textsize_y *before_cnt : mes strmid( tmp.cnt, 2, strlen( tmp.cnt ) -2 ), 1        
+
+                                msgPosShift += ginfo_mesx
+
+                            loop
+
+                        }
+/*
+                        if ( instr( msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == 0 ) {
+
+                            pos textsize_x * msgoffset.eLine, textsize_y *cnt
+                            celput SCREEN_CEL, int( strmid( msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1, strlen( msg_Line.isEng.( nowTrain +cnt -isShiftingLine ) ) -1 ) )
+
+                        } else {
+
+                            rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine, textsize_y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                            if ( isBold.eLine.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +1, textsize_y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                        }
+*/
                     }
 
                     if ( ( isBlinking and isBlink.eType.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
