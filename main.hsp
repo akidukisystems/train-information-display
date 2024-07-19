@@ -37,11 +37,15 @@
     // 2行目を描画するかの判定に使う
     // 列車が接近してない、列車接近メッセージが表示されていない、メッセージが表示されていない
     #define isCanview2nd ( ( isApproaching == 0 ) and ( isTrainmsg == 0 ) and ( isMsg == 0 ) )
+    // ファイルが存在しないか
+    #define isFileNotFound ( strsize == -1 )
 
 
 
     screen 2, BTN_SIZE_X *BTN_MUL *2, 480, 4
     title "操作ウインドウ"
+
+    nowLoadingFile = ".\\entry\\entry.ini"
 
 *reset
 
@@ -88,6 +92,7 @@
 
     objsize BTN_SIZE_X *BTN_MUL, BTN_SIZE_Y, 0
     pos 0, ginfo_cy + SPACE : button gosub "このソフトについて", *l_author
+    pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y : button gosub "別のファイルを読込む", *l_select
 
 
     gsel 1
@@ -96,13 +101,25 @@
 
     // 初期化
 
+    isChangedFile = 0
+
     entry = 0
     escapeStr = "$"
 
     fontname = "MS Gothic"
     fontsize = 16
 
-    cfgAS_init "entry.txt"
+    exist nowLoadingFile
+    if ( isFileNotFound ) {
+
+        dialog "\""+ nowLoadingFile +"\" が存在しません。ファイルを参照してください。", 1, "ファイル読込みエラー"
+        gosub *l_select
+
+        goto *reset
+
+    }
+
+    cfgAS_init nowLoadingFile
 
     cfgAS_read "escapestr", escapeStr
     cfgAS_read "font.name", fontname
@@ -288,9 +305,12 @@
     nowTimer = 0
 
     repeat
+        
+        // ファイルが変更されたらリセット
+        if ( isChangedFile ) : break
 
         gsel 0  ;コピー元画面
-        ;redraw 0
+        redraw 0
         color : boxf
 
         // 種別・行先・時刻・両数　点滅動作
@@ -447,6 +467,8 @@
 
     loop
 
+    goto *reset
+
 *l_approaching_true
 
     // 列車接近セット
@@ -538,5 +560,14 @@
 *l_author
 
     dialog "製作：秋月\n\nこのソフトウエアを使用したことで生じた損害について、製作者はいかなる場合でも一切責任を負いません。\n\nCopyright (c) 2024 AkidukiSystems All Right Reserved.\n  www.akidukisystems.com"
+
+    return
+
+*l_select
+
+    dialog "ini", 16, "File"
+
+    isChangedFile = 1
+    nowLoadingFile = refstr
 
     return
