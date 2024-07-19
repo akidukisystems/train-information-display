@@ -10,7 +10,7 @@
 #define done    0
 #define fail    1
 
-// bool‚Ì‘ã—p‚Æ‚µ‚Äint‚ðŽg—p
+// boolï¿½Ì‘ï¿½pï¿½Æ‚ï¿½ï¿½ï¿½intï¿½ï¿½ï¿½gï¿½p
 #define bool    int
 
 #enum varType_Label = 1
@@ -114,6 +114,8 @@ return 1
     if ( Var_isLoad == 0 ) : return 1
 
     Flag_isDone = 0
+
+    if ( instr( Var_ConfigLine, 0, name ) == -1 ) : return 3
 
     notesel Var_ConfigLine
     repeat notemax
