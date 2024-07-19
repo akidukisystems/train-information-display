@@ -1,5 +1,6 @@
     #include "cfg.as"
     #include "hsp3utf.as"
+    #include "msglib.as"
 
     // 画面サイズ指定
     textsize_x    = 8
@@ -11,10 +12,18 @@
     #define     OFFSET_X        0
     #define     OFFSET_Y        1
 
-    buffer 0, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
+    #enum   SCREEN_S = 0
+    #enum   SCREEN_D
+    #enum   SCREEN_CONTROL
+    #enum   SCREEN_LOG
+    #enum   SCREEN_DUMMY
 
-    screen 1, (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 4
+    buffer SCREEN_S, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
+
+    screen SCREEN_D, (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 4
     title "スクリーン"
+
+    screen SCREEN_LOG
 
     
     // ボタンサイズ指定
@@ -41,25 +50,32 @@
     #define isFileNotFound ( strsize == -1 )
 
 
-    screen 4
+    buffer SCREEN_DUMMY
 
-    screen 2, BTN_SIZE_X *BTN_MUL *2, 480, 4
+    screen SCREEN_CONTROL, BTN_SIZE_X *BTN_MUL *2, 480, 4
     title "操作ウインドウ"
 
     nowLoadingFile = ".\\entry\\entry.ini"
 
 *reset
 
-    gsel 0
+    gsel SCREEN_S
     cls : pos 0, 0
 
-    gsel 1
+    gsel SCREEN_D
     cls : pos 0, 0
 
-    gsel 2
+    gsel SCREEN_CONTROL
     cls : pos 0, 0
 
-    mes "起動中です　しばらくお待ちください"
+    gsel SCREEN_LOG
+    cls : pos 0, 0
+
+    init_msglib SCREEN_LOG
+
+    putmes_msglib "起動中です　しばらくお待ちください。\n", SCREEN_LOG
+    
+    gsel SCREEN_CONTROL
 
     font "MS Gothic", 26
     objmode 2
@@ -96,7 +112,7 @@
     pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y : button gosub "別のファイルを読込む", *l_select
 
 
-    gsel 1
+    gsel SCREEN_D
 
     font "MS Gothic", 16
 
@@ -173,6 +189,10 @@
     isEng = 0
     nowMsg = 0
 
+    putmes_msglib "変数を初期化しました\n", SCREEN_LOG
+    putmes_msglib "読込むファイル：\""+ nowLoadingFile +"\"\n", SCREEN_LOG
+    putmes_msglib "列車エントリ数："+ entry +"\n", SCREEN_LOG
+
     // 読み込み
 
     repeat entry
@@ -238,6 +258,10 @@
             cfgAS_read "imsg_thisTrainMsg."+ cnt +"."+ before_cnt +"", imsg_thisTrainMsg.cnt.before_cnt
             cfgAS_read "isBlinkThisTrainMsg."+ cnt +"."+ before_cnt +"", isBlinkThisTrainMsg.cnt.before_cnt
 
+            if ( msg_thisTrainMsg.cnt.before_cnt == "$" ) : break
+
+            wait 1
+
         loop
 
         cfgAS_read "imsg_Line."+ cnt +"", imsg_Line.cnt
@@ -258,6 +282,10 @@
         cfgAS_read "isBlink.Time."+ cnt +"", isBlink.eTime.cnt
         cfgAS_read "isBlink.Cars."+ cnt +"", isBlink.eCars.cnt
 
+        putmes_msglib "エントリ "+ cnt +" のデータを読込みました\n", SCREEN_LOG
+
+        wait 1
+
     loop
 
     cfgAS_read "msg_Approaching.j", msg_Approaching.j
@@ -269,6 +297,8 @@
 
     sdim msg_msg, 64, msgSections, msgEntry
     dim imsg_msg, msgSections, msgEntry
+
+    putmes_msglib "メッセージエントリ数："+ msgEntry +"\n", SCREEN_LOG
 
     repeat msgEntry
 
@@ -283,8 +313,16 @@
             cfgAS_read "msg_msg."+ cnt +"."+ before_cnt +"", msg_msg.cnt.before_cnt
             cfgAS_read "imsg_msg."+ cnt +"."+ before_cnt +"", imsg_msg.cnt.before_cnt
             cfgAS_read "isBlinkMsg."+ cnt +"."+ before_cnt +"", isBlinkMsg.cnt.before_cnt
+
+            if ( msg_msg.cnt.before_cnt == "$" ) : break
+
+            wait 1
             
         loop
+
+        putmes_msglib "エントリ "+ cnt +" のデータを読み込みました\n", SCREEN_LOG
+
+        wait 1
 
     loop
 
@@ -300,20 +338,24 @@
     cfgAS_read "screen.text.lines", text_line
     cfgAS_read "screen.mag", SCREEN_MAG
 
-    buffer 0, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
+    putmes_msglib "スクリーン情報を読み込みました\n", SCREEN_LOG
 
-    screen 1, (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 4
+    buffer SCREEN_S, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
+
+    screen SCREEN_D, (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 4
     title "スクリーン"
 
     imsg_Approaching = $FF0000
 
 
     
-    gsel 0
+    gsel SCREEN_S
     font fontname, fontsize
 
-    gsel 4
+    gsel SCREEN_DUMMY
     font fontname, fontsize
+
+    putmes_msglib "ready\n", SCREEN_LOG
 
     nowTimer = 0
 
@@ -322,7 +364,7 @@
         // ファイルが変更されたらリセット
         if ( isChangedFile ) : break
 
-        gsel 0  ;コピー元画面
+        gsel SCREEN_S  ;コピー元画面
         redraw 0
         color : boxf
 
@@ -359,11 +401,11 @@
 
                         } else {
 
-                            gsel 4
+                            gsel SCREEN_DUMMY
                             mes msg_thisTrainMsg.cnt.nowMsg
                             tmp = ginfo_mesx
 
-                            gsel 0
+                            gsel SCREEN_S
                             msgsize += tmp
                             pos ginfo_cx + tmp, ginfo_cy
 
@@ -399,11 +441,11 @@
 
                         } else {
 
-                            gsel 4
+                            gsel SCREEN_DUMMY
                             mes msg_msg.cnt.nowMsg
                             tmp = ginfo_mesx
 
-                            gsel 0
+                            gsel SCREEN_S
                             msgsize += tmp
                             pos ginfo_cx + tmp, ginfo_cy
 
@@ -468,7 +510,7 @@
         redraw 1
 
         // コピー
-        gsel 1
+        gsel SCREEN_D
         gzoom (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 0, 0, 0, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 0
 
 
