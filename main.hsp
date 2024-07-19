@@ -37,7 +37,7 @@
     #func PostMessage "PostMessageA" int,int,int,int
 
     #define     MSG_USER         0x0400
-    #define     MSG_LOADEDSMV   ( MSG_USER + 0x101 )
+    #define     MSG_CHANGED_DATA   ( MSG_USER + 0x101 )
 
     // îzóÒÇ≈égÇ§íËêî
     #enum   eLine = 0
@@ -130,7 +130,7 @@
 
     // èâä˙âª
 
-    oncmd goto *SMVloaded, MSG_LOADEDSMV
+    oncmd goto *l_changed_data, MSG_CHANGED_DATA
 
     entry = 0
     escapeStr = "$"
@@ -352,7 +352,7 @@
 
     oncmd 0
 
-*SMVloaded
+*l_SMVloaded
 
     buffer SCREEN_S, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
 
@@ -684,6 +684,8 @@
     isChangedFile = 1
     nowLoadingFile = refstr
 
+    PostMessage hwnd, MSG_CHANGED_DATA, 2, 0
+
     return
 
 *l_smartview_write
@@ -700,8 +702,27 @@
 
         vload refstr
 
-        PostMessage hwnd, MSG_LOADEDSMV, 1, 100
+        PostMessage hwnd, MSG_CHANGED_DATA, 1, 0
 
     }
 
     return
+
+*l_changed_data
+
+    switch wparam
+
+        case 1
+
+            goto *l_SMVloaded
+
+        swbreak
+        case 2
+
+            goto *reset
+
+        swbreak
+
+    swend
+
+    stop
