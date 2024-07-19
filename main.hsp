@@ -352,6 +352,9 @@
 
     cfgAS_read "celimage", celImagePath
 
+    celSize_x = 0
+    celSize_y = 0
+
     if ( celImagePath != "" ) {
 
         cfgAS_read "celsize.x", celSize_x
@@ -500,7 +503,6 @@
 
                         } else {
 
-                            sdim tmp
                             split msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
 
                             before_cnt = cnt
@@ -517,6 +519,8 @@
 
                             repeat length( tmp ) -1, 1
 
+                                if ( splitedcnt == cnt ) : break
+
                                 pos textsize_x * msgoffset.eLine +msgPosShift, textsize_y *before_cnt
                                 celput SCREEN_CEL, int( strmid( tmp.cnt, 0, 2 ) )
 
@@ -530,39 +534,133 @@
                             loop
 
                         }
-/*
-                        if ( instr( msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == 0 ) {
 
-                            pos textsize_x * msgoffset.eLine, textsize_y *cnt
-                            celput SCREEN_CEL, int( strmid( msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1, strlen( msg_Line.isEng.( nowTrain +cnt -isShiftingLine ) ) -1 ) )
-
-                        } else {
-
-                            rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine, textsize_y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
-                            if ( isBold.eLine.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +1, textsize_y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
-
-                        }
-*/
                     }
 
                     if ( ( isBlinking and isBlink.eType.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
 
-                        rgbcolor imsg_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType, textsize_y *cnt : mes msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 1
-                        if ( isBold.eType.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +1, textsize_y *cnt : mes msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                        if ( instr( msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
 
+                            rgbcolor imsg_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType, textsize_y *cnt : mes msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                            if ( isBold.eType.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +1, textsize_y *cnt : mes msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                        } else {
+
+                            split msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
+
+                            before_cnt = cnt
+                            msgPosShift = 0
+
+                            if ( tmp.0 != "" ) {
+
+                                rgbcolor imsg_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType, textsize_y *cnt : mes tmp.0, 1
+                                if ( isBold.eType.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +1, textsize_y *cnt : mes tmp.0, 1        
+
+                                msgPosShift = ginfo_mesx
+
+                            }
+
+                            repeat length( tmp ) -1, 1
+
+                                if ( splitedcnt == cnt ) : break
+
+                                pos textsize_x * msgoffset.eType +msgPosShift, textsize_y *before_cnt
+                                celput SCREEN_CEL, int( strmid( tmp.cnt, 0, 2 ) )
+
+                                msgPosShift += celSize_x
+
+                                rgbcolor imsg_Type.( nowTrain +before_cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +msgPosShift , textsize_y *before_cnt : mes strmid( tmp.cnt, 2, strlen( tmp.cnt ) -2 ), 1
+                                if ( isBold.eType.( nowTrain +before_cnt -isShiftingLine ) ) : rgbcolor imsg_Type.( nowTrain +before_cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +msgPosShift +1, textsize_y *before_cnt : mes strmid( tmp.cnt, 2, strlen( tmp.cnt ) -2 ), 1        
+
+                                msgPosShift += ginfo_mesx
+
+                            loop
+
+                        }
                     }
 
                     if ( ( isBlinking and isBlink.eFor.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
 
-                        rgbcolor imsg_For.( nowTrain +cnt -isShiftingLine )  : pos textsize_x * msgoffset.eFor, textsize_y *cnt : mes msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 1
-                        if ( isBold.eFor.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_For.( nowTrain +cnt -isShiftingLine )  : pos textsize_x * msgoffset.eFor +1, textsize_y *cnt : mes msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                        if ( instr( msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
 
+                            rgbcolor imsg_For.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor, textsize_y *cnt : mes msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                            if ( isBold.eFor.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_For.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor +1, textsize_y *cnt : mes msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                        } else {
+
+                            split msg_For.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
+
+                            before_cnt = cnt
+                            msgPosShift = 0
+
+                            if ( tmp.0 != "" ) {
+
+                                rgbcolor imsg_For.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor, textsize_y *cnt : mes tmp.0, 1
+                                if ( isBold.eFor.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_For.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor +1, textsize_y *cnt : mes tmp.0, 1        
+
+                                msgPosShift = ginfo_mesx
+
+                            }
+
+                            repeat length( tmp ) -1, 1
+
+                                if ( splitedcnt == cnt ) : break
+
+                                pos textsize_x * msgoffset.eFor +msgPosShift, textsize_y *before_cnt
+                                celput SCREEN_CEL, int( strmid( tmp.cnt, 0, 2 ) )
+
+                                msgPosShift += celSize_x
+
+                                rgbcolor imsg_For.( nowTrain +before_cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor +msgPosShift , textsize_y *before_cnt : mes strmid( tmp.cnt, 2, strlen( tmp.cnt ) -2 ), 1
+                                if ( isBold.eFor.( nowTrain +before_cnt -isShiftingLine ) ) : rgbcolor imsg_For.( nowTrain +before_cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor +msgPosShift +1, textsize_y *before_cnt : mes strmid( tmp.cnt, 2, strlen( tmp.cnt ) -2 ), 1        
+
+                                msgPosShift += ginfo_mesx
+
+                            loop
+
+                        }
                     }
 
                     if ( ( isBlinking and isBlink.eTime.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
 
-                        rgbcolor imsg_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime, textsize_y *cnt : mes msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 1
-                        if ( isBold.eTime.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +1, textsize_y *cnt : mes msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                        if ( instr( msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
+
+                            rgbcolor imsg_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime, textsize_y *cnt : mes msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                            if ( isBold.eTime.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +1, textsize_y *cnt : mes msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                        } else {
+
+                            split msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
+
+                            before_cnt = cnt
+                            msgPosShift = 0
+
+                            if ( tmp.0 != "" ) {
+
+                                rgbcolor imsg_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime, textsize_y *cnt : mes tmp.0, 1
+                                if ( isBold.eTime.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +1, textsize_y *cnt : mes tmp.0, 1        
+
+                                msgPosShift = ginfo_mesx
+
+                            }
+
+                            repeat length( tmp ) -1, 1
+
+                                if ( splitedcnt == cnt ) : break
+
+                                pos textsize_x * msgoffset.eTime +msgPosShift, textsize_y *before_cnt
+                                celput SCREEN_CEL, int( strmid( tmp.cnt, 0, 2 ) )
+
+                                msgPosShift += celSize_x
+
+                                rgbcolor imsg_Time.( nowTrain +before_cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +msgPosShift , textsize_y *before_cnt : mes strmid( tmp.cnt, 2, strlen( tmp.cnt ) -2 ), 1
+                                if ( isBold.eTime.( nowTrain +before_cnt -isShiftingLine ) ) : rgbcolor imsg_Time.( nowTrain +before_cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +msgPosShift +1, textsize_y *before_cnt : mes strmid( tmp.cnt, 2, strlen( tmp.cnt ) -2 ), 1        
+
+                                msgPosShift += ginfo_mesx
+
+                            loop
+
+                        }
 
                     }
 
@@ -575,7 +673,6 @@
 
                         } else {
 
-                            sdim tmp
                             split msg_Cars.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
 
                             before_cnt = cnt
@@ -591,6 +688,8 @@
                             }
 
                             repeat length( tmp ) -1, 1
+
+                                if ( splitedcnt == cnt ) : break
 
                                 pos textsize_x * msgoffset.eCars +msgPosShift, textsize_y *before_cnt
                                 celput SCREEN_CEL, int( strmid( tmp.cnt, 0, 2 ) )
