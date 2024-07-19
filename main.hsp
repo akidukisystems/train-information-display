@@ -320,7 +320,7 @@
             
         loop
 
-        putmes_msglib "エントリ "+ cnt +" のデータを読み込みました\n", SCREEN_LOG
+        putmes_msglib "エントリ "+ cnt +" のデータを読込みました\n", SCREEN_LOG
 
         wait 1
 
@@ -338,7 +338,7 @@
     cfgAS_read "screen.text.lines", text_line
     cfgAS_read "screen.mag", SCREEN_MAG
 
-    putmes_msglib "スクリーン情報を読み込みました\n", SCREEN_LOG
+    putmes_msglib "スクリーン情報を読込みました\n", SCREEN_LOG
 
     buffer SCREEN_S, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
 
