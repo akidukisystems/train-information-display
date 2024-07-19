@@ -6,3 +6,4 @@ main.ax
 entry *.*
 packfile
 start.ax
+*.smv
