@@ -105,6 +105,20 @@ return
 
 return 1
 
+#deffunc cfgAS_initmem var data
+
+    Var_ConfigLine = ""
+    Var_ThisConfigLine = ""
+    Var_isLoad = 0
+    sdim Var_ThisConfigLineArray
+
+    notesel Var_ConfigLine
+    Var_ConfigLine = data
+    noteunsel
+    Var_isLoad = 1
+
+    return 0
+
 
 
 #define global cfgAS_read(%1, %2, %3=0) cfgAS_read_l@cfg_AS %1, %2, %3

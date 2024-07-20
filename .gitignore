@@ -1,9 +1,7 @@
 a.png
-mss.hsp
-mss.txt
-mss.zip
+mss.*
 main.ax
 entry *.*
 packfile
-start.ax
+*.ax
 *.smv

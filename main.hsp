@@ -19,6 +19,7 @@
     #enum   SCREEN_LOG
     #enum   SCREEN_DUMMY
     #enum   SCREEN_CEL
+    #enum   SCREEN_PASSWORD
 
     buffer SCREEN_S, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
 
@@ -63,7 +64,20 @@
     screen SCREEN_CONTROL, BTN_SIZE_X *BTN_MUL *2, 480, 4
     title "操作ウインドウ"
 
-    nowLoadingFile = ".\\entry\\entry.ini"
+    screen SCREEN_PASSWORD, 320, 240, 4
+    title "パスワードを入力してください"
+
+    mes "パスワードを入力してください"
+
+    password = ""
+    input password, 200, 24, 0
+
+    button gosub "実行", *l_passwordEnter
+    button gosub "キャンセル", *l_passwordCancel
+
+    gsel SCREEN_PASSWORD, -1
+
+    nowLoadingFile = ".\\entry\\entry.ini.ein"
 
 *reset
 
@@ -142,14 +156,77 @@
     exist nowLoadingFile
     if ( isFileNotFound ) {
 
-        dialog "\""+ nowLoadingFile +"\" が存在しません。ファイルを参照してください。", 1, "ファイル読込みエラー"
+        dialog "\""+ nowLoadingFile +"\" が存在しません。別のファイルを参照してください。", 1, "ファイル読込みエラー"
         gosub *l_select
 
         goto *reset
 
     }
 
-    cfgAS_init nowLoadingFile
+    isPasswordEnter = 0
+    isPasswordCancel = 0
+
+    if ( getpath( nowLoadingFile, 18 ) == ".ein" ) {
+
+        exist nowLoadingFile
+        filesize = strsize
+
+        sdim encryptedfile, filesize
+        sdim decryptedfile, filesize
+        bload nowLoadingFile, encryptedfile
+
+        password = ""
+
+        gsel SCREEN_PASSWORD, 1
+
+        repeat
+
+            if ( isPasswordEnter or isPasswordCancel ) : break
+
+            wait 1
+
+        loop
+
+        gsel SCREEN_PASSWORD, -1
+
+        if ( isPasswordCancel ) {
+
+            dialog "\""+ nowLoadingFile +"\" が開けません。別のファイルを参照してください。", 1, "ファイル読込みエラー"
+            gosub *l_select
+
+            goto *reset
+
+        }
+
+        tmp = 0
+
+        repeat filesize
+
+            poke decryptedfile, cnt, peek( encryptedfile, cnt ) xor peek( password, tmp )
+
+            tmp ++
+            if ( tmp == strlen( password ) ) : tmp = 0
+
+        loop
+
+        if ( instr( decryptedfile, 0, "##" ) != 0 ) {
+
+            dialog "\""+ nowLoadingFile +"\" のパスワードが間違っています。別のファイルを参照してください。", 1, "ファイル復号化エラー"
+            gosub *l_select
+
+            goto *reset
+
+        }
+
+        cfgAS_initmem decryptedfile
+
+    } else {
+
+        cfgAS_init nowLoadingFile
+
+    }
+
+    
 
     cfgAS_read "escapestr", escapeStr
     cfgAS_read "font.name", fontname
@@ -874,7 +951,9 @@
 
 *l_select
 
-    dialog "ini", 16, "File"
+    dialog "ini|ein", 16, "File|Encrypted file"
+
+    if ( stat != 1 ) : return
 
     isChangedFile = 1
     nowLoadingFile = refstr
@@ -921,3 +1000,15 @@
     swend
 
     stop
+
+*l_passwordEnter
+
+    isPasswordEnter = 1
+
+    return
+
+*l_passwordCancel
+
+    isPasswordCancel = 1
+
+    return

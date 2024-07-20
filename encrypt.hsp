@@ -1,0 +1,51 @@
+
+    screen 0, 320, 240
+
+    gosub *l_open
+
+    key = ""
+
+    mes "パスワードを入力してください。"
+    input key, 120, 20
+
+    button "実行", *l_do
+    button "開く", *l_open
+
+    stop
+
+*l_do
+
+    count = 0
+
+    repeat size
+
+        poke to, cnt, peek( file, cnt ) xor peek( key, count )
+
+        count ++
+        if ( count == strlen( key ) ) : count = 0
+
+    loop
+
+    dialog path +".ein に保存しました。"
+
+    bsave path +".ein", to
+
+    stop
+
+*l_open
+    dialog "*", 16, ""
+
+    if ( stat != 1 ) : return
+
+    path = refstr
+
+    exist path
+
+    size = strsize
+
+    sdim file, size
+    sdim to, size
+
+    bload path, file
+
+    return
