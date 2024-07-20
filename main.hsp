@@ -77,7 +77,7 @@
 
     gsel SCREEN_PASSWORD, -1
 
-    nowLoadingFile = ".\\entry\\entry.ini.ein"
+    nowLoadingFile = ".\\entry\\entry.ini"
 
 *reset
 
@@ -153,6 +153,8 @@
     fontname = "MS Gothic"
     fontsize = 16
 
+    // ファイルは存在するか
+
     exist nowLoadingFile
     if ( isFileNotFound ) {
 
@@ -162,6 +164,8 @@
         goto *reset
 
     }
+
+    // ファイルは暗号化されているか
 
     isPasswordEnter = 0
     isPasswordCancel = 0
@@ -177,6 +181,7 @@
 
         password = ""
 
+        // パスワード入力ダイアログ
         gsel SCREEN_PASSWORD, 1
 
         repeat
@@ -198,6 +203,8 @@
 
         }
 
+        // 復号化
+
         tmp = 0
 
         repeat filesize
@@ -208,6 +215,8 @@
             if ( tmp == strlen( password ) ) : tmp = 0
 
         loop
+
+        // マジックコード "##" で復号化できているか確認（パスワードが2バイト以上のものには効果ないかも）
 
         if ( instr( decryptedfile, 0, "##" ) != 0 ) {
 
