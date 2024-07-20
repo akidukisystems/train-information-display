@@ -1,3 +1,4 @@
+    #packopt name "enc"
 
     screen 0, 320, 240
 
