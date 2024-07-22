@@ -210,7 +210,23 @@
         tmp = 0
         chksum = 0
 
-        if ( strmid( encryptedfile, 0, 4 ) != "EINI" ) : dialog "復号化できる種類のファイルではありません", 1, "エラー" : stop
+        if ( password == "" ) {
+
+            dialog "復号化に失敗しました。\n理由：パスワードを入力してください。", 1, "ファイル復号化エラー"
+            gosub *l_select
+
+            goto *reset
+
+        }
+
+        if ( strmid( encryptedfile, 0, 4 ) != "EINI" ) {
+
+            dialog "復号化に失敗しました。\n理由：復号化できる種類のファイルではありません。", 1, "ファイル復号化エラー"
+            gosub *l_select
+
+            goto *reset
+
+        }
 
         repeat filesize -8
     
@@ -222,7 +238,14 @@
 
         loop
 
-        if ( lpeek( encryptedfile, 4 ) != chksum ) : dialog "復号化に失敗しました", 1, "エラー" : stop
+        if ( lpeek( encryptedfile, 4 ) != chksum ) {
+            
+            dialog "復号化に失敗しました。\n理由：チェックサムが一致しません。パスワードが間違っているか、ファイルが改ざんされている可能性があります。", 1, "ファイル復号化エラー"
+            gosub *l_select
+
+            goto *reset
+
+        }
 /*
         // マジックコード "##" で復号化できているか確認（パスワードが2バイト以上のものには効果ないかも）
         // チェックサム実装により廃止
@@ -990,7 +1013,11 @@
 
 *l_smartview_read
 
+    nowDirectory = dir_cur
+
     dialog "smv", 16, "スマートビューファイル"
+
+    chdir nowDirectory
 
     if ( stat ) {
 
