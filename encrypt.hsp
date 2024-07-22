@@ -1,5 +1,8 @@
     #packopt name "enc"
 
+    #enum RAW_DATA = 0
+    #enum ENC_DATA
+
     screen 0, 320, 240
 
     gosub *l_open
@@ -9,27 +12,63 @@
     mes "パスワードを入力してください。"
     input key, 120, 20
 
-    button "実行", *l_do
-    button "開く", *l_open
+    button goto "実行", *l_do
+    button gosub "開く", *l_open
 
     stop
 
 *l_do
 
-    count = 0
+    if ( filetype == RAW_DATA ) {
 
-    repeat size
+        chksum = 0
+        count = 0
 
-        poke to, cnt, peek( file, cnt ) xor peek( key, count )
+        repeat size
 
-        count ++
-        if ( count == strlen( key ) ) : count = 0
+            poke to, cnt +8, peek( file, cnt ) xor peek( key, count )
+            chksum += peek( file, cnt )
 
-    loop
+            count ++
+            if ( count == strlen( key ) ) : count = 0
 
-    dialog path +".ein に保存しました。"
+        loop
 
-    bsave path +".ein", to
+        poke to, 0, "EINI"
+        lpoke to, 4, chksum
+
+        dialog getpath( path, 1 ) +".ein に保存しました。"
+
+        bsave getpath( path, 1 ) +".ein", to
+
+    }
+
+    if ( filetype == ENC_DATA ) {
+
+        chksum = 0
+        count = 0
+
+        if ( strmid( file, 0, 4 ) != "EINI" ) : dialog "復号化できる種類のファイルではありません", 1, "エラー" : stop
+
+        repeat size -8
+
+            poke to, cnt, peek( file, cnt +8 ) xor peek( key, count )
+            chksum += peek( file, cnt +8 ) xor peek( key, count )
+
+            count ++
+            if ( count == strlen( key ) ) : count = 0
+
+        loop
+
+        logmes lpeek( file, 4 )
+
+        if ( lpeek( file, 4 ) != chksum ) : dialog "復号化に失敗しました", 1, "エラー" : stop
+
+        dialog getpath( path, 1 ) +".ini に保存しました。"
+
+        bsave getpath( path, 1 ) +".ini", to
+
+    }
 
     stop
 
@@ -45,8 +84,27 @@
     size = strsize
 
     sdim file, size
-    sdim to, size
 
     bload path, file
+
+    filetype = -1
+
+    switch getpath( path, 18 )
+
+        case ".ini"
+
+            filetype = RAW_DATA
+            sdim to, size + 8
+
+        swbreak
+
+        case ".ein"
+
+            filetype = ENC_DATA
+            sdim to, size -8
+
+        swbreak
+
+    swend
 
     return
