@@ -56,7 +56,7 @@
 
     // 2行目を描画するかの判定に使う
     // 列車が接近してない、列車接近メッセージが表示されていない、メッセージが表示されていない
-    #define isCanview2nd ( ( isApproaching == 0 ) and ( isTrainmsg == 0 ) and ( isMsg == 0 ) )
+    #define isCanview2ndLine ( ( isApproaching == 0 ) and ( isTrainmsg == 0 ) and ( isMsg == 0 ) )
     // ファイルが存在しないか
     #define isFileNotFound ( strsize == -1 )
 
@@ -489,7 +489,7 @@
         repeat text_line
 
             isShiftingLine = 0
-            if ( ( isCanview2nd != 1 ) and ( cnt != 0 ) ) : isShiftingLine = 1
+            if ( ( isCanview2ndLine != 1 ) and ( cnt != 0 ) ) : isShiftingLine = 1
 
             if ( cnt == 1 ) {
 
@@ -578,7 +578,7 @@
 
             }
 
-            if ( ( isCanview2nd ) or ( cnt != 1 ) ) {
+            if ( ( isCanview2ndLine ) or ( cnt != 1 ) ) {
 
                 if ( ( nowTrain +cnt -isShiftingLine ) < entry ) {
 
