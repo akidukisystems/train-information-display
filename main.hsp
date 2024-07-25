@@ -91,7 +91,7 @@
 
     isChangedFile = 0
     sdim msg_extra, , 10
-    dim imsg_extra, 10
+    sdim imsg_extra, , 10
     dim isBlinkExtraMsg, 10
 
     gsel SCREEN_S
@@ -1232,6 +1232,8 @@
     cls
     color
 
+    objsize 100, 20, 0
+
     foreach msg_extra
 
         pos 0, 20 *cnt *2
@@ -1241,13 +1243,16 @@
         input msg_extra.cnt, 640 -ginfo_mesx, 20, 0
 
         pos ginfo_mesx, 20 *cnt *2 +20
-        input imsg_extra.cnt, 100, 20, 0
+        input imsg_extra.cnt, 100, 20, 6
 
         pos ginfo_mesx +100, 20 *cnt *2 +20
-        input isBlinkExtraMsg.cnt, 100, 20, 0
+        combox isBlinkExtraMsg.cnt, 0, "“_–Å‚µ‚È‚¢\n“_–Å‚·‚é"
 
 
     loop
+
+    objsize 128, 32, 0
+    pos 0, ginfo_cy
 
     button gosub "•\Ž¦", *l_submit
 
@@ -1267,7 +1272,7 @@
 
     foreach imsg_extra
 
-        imsg_msg.cnt.msgEntry = imsg_extra.cnt
+        imsg_msg.cnt.msgEntry = int( "$"+ imsg_extra.cnt )
 
     loop
 
