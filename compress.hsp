@@ -1,0 +1,52 @@
+    #packopt name "enc"
+
+    #include "zipfile.as"
+
+    #enum RAW_DATA = 0
+    #enum ENC_DATA
+
+    screen 0, 320, 240
+
+    gosub *l_open
+
+    button gosub "開く", *l_open
+
+    stop
+
+*l_open
+
+    dialog "暗号化された設定ファイルを選択してください。"
+    dialog "ein", 16, ""
+
+    if ( stat != 1 ) : return
+
+    path_ein = refstr
+
+    dialog "画像ファイルを選択してください。"
+    dialog "png|jpg|jpeg|bmp", 16, ""
+
+    if ( stat != 1 ) : return
+
+    path_pic = refstr
+
+    nowtime = ""+ gettime(0) +"-"+ gettime(1) +"-"+ gettime(3) +"-"+ gettime(4) +"-"+ gettime(5) +"-"+ gettime(6) +""
+
+    bcopy path_ein, dir_cur +"\\cmprsd"+ nowtime +".ein"
+    bcopy path_pic, dir_cur +"\\cmprsd"+ nowtime +""+ getpath( path_pic, 2 )
+
+    ZipCompress "cmprsd*.*", getpath( path_ein, 1 ) +".ceini"
+
+    if ( stat ) {
+
+        dialog "圧縮に失敗しました。", 1, "エラー"
+
+    } else {
+
+        dialog "圧縮が完了しました。\n\""+ getpath( path_ein, 1 ) +".ceini\" に保存しました。"
+
+    }
+
+    delete dir_cur +"\\cmprsd"+ nowtime +".ein"
+    delete dir_cur +"\\cmprsd"+ nowtime +""+ getpath( path_pic, 2 )
+
+    return
