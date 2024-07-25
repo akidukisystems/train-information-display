@@ -1067,6 +1067,12 @@
     isApproaching = 1
     isTrainmsg = 0
     isMsg = 0
+    if ( beforeMsg != -1 ) {
+
+        nowMsg = beforeMsg
+        beforeMsg = -1
+
+    }
     isApproachingView = 0
 
     return
@@ -1086,6 +1092,12 @@
     if ( isApproaching ) : return
 
     isMsg = 1
+    if ( beforeMsg != -1 ) {
+
+        nowMsg = beforeMsg
+        beforeMsg = -1
+
+    }
     isTrainmsg = 0
     roll = ( textsize_x * text_length + OFFSET_X ) *-1 ; 画面右端から始まるようにする
 
@@ -1099,6 +1111,12 @@
 
     isTrainmsg = 1
     isMsg = 0
+    if ( beforeMsg != -1 ) {
+
+        nowMsg = beforeMsg
+        beforeMsg = -1
+
+    }
     roll = ( textsize_x * text_length + OFFSET_X ) *-1 ; 画面右端から始まるようにする
     return
 
@@ -1282,8 +1300,12 @@
 
     loop
 
-    beforeMsg = nowMsg
-    nowMsg = msgEntry
+    if ( beforeMsg == -1 ) {
+
+        beforeMsg = nowMsg
+        nowMsg = msgEntry
+
+    }
 
     isMsg = 1
     isTrainmsg = 0
