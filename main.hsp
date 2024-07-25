@@ -1,3 +1,5 @@
+    /* Shift JIS */    
+    
     #packopt name "main"
 
     #include "cfg.as"
@@ -22,6 +24,7 @@
     #enum   SCREEN_DUMMY
     #enum   SCREEN_CEL
     #enum   SCREEN_PASSWORD
+    #enum   SCREEN_EXTRAMSG
 
     buffer SCREEN_S, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
 
@@ -29,6 +32,9 @@
     title "スクリーン"
 
     screen SCREEN_LOG
+    screen SCREEN_EXTRAMSG, , , 4
+
+    gsel SCREEN_EXTRAMSG, -1
 
     
     // ボタンサイズ指定
@@ -84,6 +90,9 @@
 *reset
 
     isChangedFile = 0
+    sdim msg_extra, , 10
+    dim imsg_extra, 10
+    dim isBlinkExtraMsg, 10
 
     gsel SCREEN_S
     cls : pos 0, 0
@@ -127,8 +136,16 @@
     pos 0, ginfo_cy + SPACE : button gosub "メッセージ表示", *l_msg
     pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL : button gosub "列車メッセージ表示", *l_trainmsg
 
+    objsize BTN_SIZE_X *BTN_MUL, BTN_SIZE_Y, 0
+
     pos 0, ginfo_cy : button gosub "メッセージ順送り", *l_nextmsg
-    pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL : button gosub "メッセージ戻し", *l_prevmsg
+    button gosub "メッセージ戻し", *l_prevmsg
+
+    objsize BTN_SIZE_X *BTN_MUL, BTN_SIZE_Y *BTN_MUL, 0
+
+    pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *2 : button gosub "臨時メッセージ", *l_extramsg
+
+    objsize BTN_SIZE_X *BTN_MUL, BTN_SIZE_Y *BTN_MUL, 0
 
     pos 0, ginfo_cy + SPACE : button gosub "画面を保存", *l_save
     pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL : button gosub "リセット", *reset
@@ -137,7 +154,7 @@
     pos 0, ginfo_cy + SPACE : button gosub "このソフトについて", *l_author
     pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y : button gosub "別のファイルを読込む", *l_select
 
-    pos 0, ginfo_cy + SPACE : button gosub "SMVファイルを書込む", *l_smartview_write
+    pos 0, ginfo_cy : button gosub "SMVファイルを書込む", *l_smartview_write
     pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y : button gosub "SMVファイルを読込む", *l_smartview_read
 
 
@@ -171,8 +188,17 @@
 
     isPasswordEnter = 0
     isPasswordCancel = 0
+    OverwritedImageFilePath = ""
 
-    if ( getpath( nowLoadingFile, 18 ) == ".ein" ) {
+    switch getpath( nowLoadingFile, 18 )
+
+    /*case ".ceini"
+
+        ZipExtract nowLoadingFile, dir_cur +"\\entry\\"
+
+        OverwritedImageFilePath = 
+*/
+    case ".ein"
 
         exist nowLoadingFile
         filesize = strsize
@@ -246,26 +272,18 @@
             goto *reset
 
         }
-/*
-        // マジックコード "##" で復号化できているか確認（パスワードが2バイト以上のものには効果ないかも）
-        // チェックサム実装により廃止
 
-        if ( instr( decryptedfile, 0, "##" ) != 0 ) {
-
-            dialog "\""+ nowLoadingFile +"\" のパスワードが間違っています。別のファイルを参照してください。", 1, "ファイル復号化エラー"
-            gosub *l_select
-
-            goto *reset
-
-        }
-*/
         cfgAS_initmem decryptedfile
 
-    } else {
+    swbreak
+
+    case ".ini"
 
         cfgAS_init nowLoadingFile
 
-    }
+    swbreak
+
+    swend
 
     cfgAS_read "escapestr", escapeStr
     cfgAS_read "font.name", fontname
@@ -281,7 +299,7 @@
     sdim msg_Time, 64, 2, entry
     sdim msg_Cars, 64, 2, entry
 
-    msgSections = 8
+    msgSections = 10
 
     sdim msg_thisTrainMsg, 64, msgSections, entry
     dim imsg_thisTrainMsg, msgSections, entry
@@ -313,7 +331,9 @@
     isTrainmsg = 0
     roll = 0
     isMsg = 0
+    isExtraMsg = 0
     isApproaching = 0
+    beforeMsg = -1
     nowTrain = 0
     isEng = 0
     nowMsg = 0
@@ -538,12 +558,6 @@
                         if ( imsg_thisTrainMsg.cnt.nowTrain == 0 ) : break
 
                         if ( ( isBlinking and isBlinkThisTrainMsg.cnt.nowTrain ) == 0 ) {
-/*
-                            rgbcolor imsg_thisTrainMsg.cnt.nowTrain
-                            mes msg_thisTrainMsg.cnt.nowTrain, 1
-
-                            msgsize += ginfo_mesx
-*/
 
                             if ( instr( msg_thisTrainMsg.cnt.nowTrain, 0, "$" ) == -1 ) {
 
@@ -629,7 +643,7 @@
 
                     loop
 
-                    if ( ( nowTimer \ 4 ) == 0 ) : roll ++
+                    if ( ( nowTimer \ 2 ) == 0 ) : roll ++
 
                     // メッセージの右端が画面左端まで行ったら終了
                     if ( roll >= msgsize ) : isTrainmsg = 0
@@ -645,28 +659,7 @@
                     msgsize = 0
 
                     repeat msgSections
-/*
-                        if ( imsg_msg.cnt.nowMsg == 0 ) : break
 
-                        if ( ( isBlinking and isBlinkMsg.cnt.nowMsg ) == 0 ) {
-
-                            rgbcolor imsg_msg.cnt.nowMsg
-                            mes msg_msg.cnt.nowMsg, 1
-
-                            msgsize += ginfo_mesx
-
-                        } else {
-
-                            gsel SCREEN_DUMMY
-                            mes msg_msg.cnt.nowMsg
-                            tmp = ginfo_mesx
-
-                            gsel SCREEN_S
-                            msgsize += tmp
-                            pos ginfo_cx + tmp, ginfo_cy
-
-                        }
-*/
                         if ( imsg_msg.cnt.nowMsg == 0 ) : break
 
                         if ( ( isBlinking and isBlinkMsg.cnt.nowMsg ) == 0 ) {
@@ -755,10 +748,20 @@
 
                     loop
 
-                    if ( ( nowTimer \ 4 ) == 0 ) : roll ++
+                    if ( ( nowTimer \ 2 ) == 0 ) : roll ++
 
                     // メッセージの右端が画面左端まで行ったら終了
-                    if ( roll >= msgsize ) : isMsg = 0
+                    if ( roll >= msgsize ) {
+                        
+                        isMsg = 0
+                        if ( beforeMsg != -1 ) {
+
+                            nowMsg = beforeMsg
+                            beforeMsg = -1
+
+                        }
+
+                    }
 
                 }
 
@@ -1000,7 +1003,7 @@
 
 
         // 5秒ごとに日本語・英語切り替わり
-        if ( ( cnt \ 1000 ) == 1 ) {
+        if ( ( cnt \ 500 ) == 1 ) {
 
             if ( isEng ) {
 
@@ -1015,7 +1018,7 @@
         }
 
         // 列車接近メッセージ点滅制御　1秒周期の0.5秒間隔
-        if ( ( ( cnt \ 100 ) == 1 ) and ( isApproaching ) ){
+        if ( ( ( cnt \ 50 ) == 1 ) and ( isApproaching ) ){
 
             if ( isApproachingView ) {
 
@@ -1030,7 +1033,7 @@
         }
 
         // 種別・行先・時刻・両数　点滅動作　1秒ごとに滅
-        if ( ( cnt \ 200 ) = 1 ) {
+        if ( ( cnt \ 100 ) = 1 ) {
 
             isBlinking = 1
 
@@ -1040,7 +1043,7 @@
         if ( isBlinking ) {
 
             blinkTimer ++
-            if ( blinkTimer == 40 ) {
+            if ( blinkTimer == 20 ) {
 
                 isBlinking = 0
                 blinkTimer = 0
@@ -1051,7 +1054,7 @@
 
         nowTimer ++
 
-        await 5
+        await 10
 
     loop
 
@@ -1155,7 +1158,7 @@
 
     nowDirectory = dir_cur
 
-    dialog "ini|ein", 16, "File|Encrypted file"
+    dialog "ini|ein|ceini", 16, "File|Encrypted file|Compressed encrypted file"
 
     chdir nowDirectory
 
@@ -1220,5 +1223,65 @@
 *l_passwordCancel
 
     isPasswordCancel = 1
+
+    return
+
+*l_extramsg
+
+    gsel SCREEN_EXTRAMSG, 1
+    cls
+    color
+
+    foreach msg_extra
+
+        pos 0, 20 *cnt *2
+        mes "第"+ cnt +"セクション :"
+
+        pos ginfo_mesx, 20 *cnt *2
+        input msg_extra.cnt, 640 -ginfo_mesx, 20, 0
+
+        pos ginfo_mesx, 20 *cnt *2 +20
+        input imsg_extra.cnt, 100, 20, 0
+
+        pos ginfo_mesx +100, 20 *cnt *2 +20
+        input isBlinkExtraMsg.cnt, 100, 20, 0
+
+
+    loop
+
+    button gosub "表示", *l_submit
+
+    return
+
+*l_submit
+
+    // メッセージ表示
+    // 列車接近中はキャンセル
+    if ( isApproaching ) : return
+
+    foreach msg_extra
+
+        msg_msg.cnt.msgEntry = msg_extra.cnt
+
+    loop
+
+    foreach imsg_extra
+
+        imsg_msg.cnt.msgEntry = imsg_extra.cnt
+
+    loop
+
+    foreach isBlinkExtraMsg
+
+        isBlinkMsg.cnt.msgEntry = isBlinkExtraMsg.cnt
+
+    loop
+
+    beforeMsg = nowMsg
+    nowMsg = msgEntry
+
+    isMsg = 1
+    isTrainmsg = 0
+    roll = ( textsize_x * text_length + OFFSET_X ) *-1 ; 画面右端から始まるようにする
 
     return
