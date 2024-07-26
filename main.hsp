@@ -7,6 +7,9 @@
     #include "msglib.as"
     #include "hspda.as"
 
+    #uselib "winmm.dll"
+    #cfunc timeGetTime "timeGetTime"
+
     // 画面サイズ指定
     textsize_x    = 8
     textsize_y    = 16
@@ -523,8 +526,10 @@
     putmes_msglib "ready\n", SCREEN_LOG
 
     nowTimer = 0
+    isFlash = 0
+    ticks = timeGetTime()
 
-    repeat
+    repeat  
         
         // ファイルが変更されたらリセット
         if ( isChangedFile ) : break
@@ -586,11 +591,9 @@
                                     if ( splitedcnt == cnt ) : break
 
                                     celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
-    
-                                    msgsize += celSize_x
 
                                     rgbcolor imsg_thisTrainMsg.before_cnt.nowTrain  : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
-                                    msgsize += ginfo_mesx 
+                                    msgsize += ginfo_mesx + celSize_x
     
                                 loop
     
@@ -625,11 +628,9 @@
                                 repeat length( string ) -1, 1
     
                                     if ( splitedcnt == cnt ) : break
-    
-                                    tmp += celSize_x
-                            
+
                                     mes strmid( string.cnt, embedImageNumSize, strlen( string.cnt ) -embedImageNumSize )
-                                    tmp += ginfo_mesx 
+                                    tmp += ginfo_mesx + celSize_x
     
                                 loop
 
@@ -691,11 +692,9 @@
                                     if ( splitedcnt == cnt ) : break
 
                                     celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
-    
-                                    msgsize += celSize_x
 
                                     rgbcolor imsg_msg.before_cnt.nowMsg : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
-                                    msgsize += ginfo_mesx 
+                                    msgsize += ginfo_mesx + celSize_x
     
                                 loop
     
@@ -730,11 +729,9 @@
                                 repeat length( string ) -1, 1
     
                                     if ( splitedcnt == cnt ) : break
-    
-                                    tmp += celSize_x
-                            
+
                                     mes strmid( string.cnt, embedImageNumSize, strlen( string.cnt ) -embedImageNumSize )
-                                    tmp += ginfo_mesx 
+                                    tmp += ginfo_mesx + celSize_x
     
                                 loop
 
@@ -938,7 +935,7 @@
                                 if ( isBold.eTime.( nowTrain +before_cnt -isShiftingLine ) ) : rgbcolor imsg_Time.( nowTrain +before_cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +msgPosShift +1, textsize_y *before_cnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1        
 
                                 msgPosShift += ginfo_mesx
-
+                                
                             loop
 
                         }
@@ -982,7 +979,7 @@
                                 if ( isBold.eCars.( nowTrain +before_cnt -isShiftingLine ) ) : rgbcolor imsg_Cars.( nowTrain +before_cnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars +msgPosShift +1, textsize_y *before_cnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1        
 
                                 msgPosShift += ginfo_mesx
-
+                                
                             loop
 
                         }
@@ -999,8 +996,30 @@
 
         // コピー
         gsel SCREEN_D
-        gzoom (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 0, 0, 0, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 0
 
+        redraw 0
+
+        gzoom (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 0, 0, 0, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 0
+        
+        pos 0, 0 : mes strf( "%dfps", freamrate )
+
+        if ( isFlash ) {
+
+            color 255, 255, 255 : boxf 0, 0, ginfo_mesx +1, ginfo_mesy +1
+            color 0, 0, 0 : pos 0, 0 : mes strf( "%dfps", freamrate )
+            
+            isFlash --
+
+        } else {
+
+            color 0, 0, 0 : boxf 0, 0, ginfo_mesx +1, ginfo_mesy +1
+            color 255, 255, 255 : pos 0, 0 : mes strf( "%dfps", freamrate )
+
+        }
+
+        pos 0, 0
+
+        redraw 1
 
         // 5秒ごとに日本語・英語切り替わり
         if ( ( cnt \ 500 ) == 1 ) {
@@ -1033,7 +1052,7 @@
         }
 
         // 種別・行先・時刻・両数　点滅動作　1秒ごとに滅
-        if ( ( cnt \ 100 ) = 1 ) {
+        if ( ( cnt \ 100 ) == 1 ) {
 
             isBlinking = 1
 
@@ -1053,6 +1072,18 @@
         }
 
         nowTimer ++
+        waitticks ++
+
+        if ( ( timeGetTime() - ticks ) >= 1000 ) {
+
+            ticks = timeGetTime()
+
+            freamrate = waitticks
+            waitticks = 0
+
+            isFlash = 5
+
+        }
 
         await 10
 
