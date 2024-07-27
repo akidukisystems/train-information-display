@@ -7,8 +7,19 @@
     #include "msglib.as"
     #include "hspda.as"
 
-    #uselib "winmm.dll"
-    #cfunc timeGetTime "timeGetTime"
+    #module
+
+        #uselib "winmm.dll"
+        #cfunc timeGetTime "timeGetTime"
+
+        #deffunc settick int tickID
+            SetTick_int.tickID = timeGetTime()
+        return
+
+        #defcfunc gettick int tickID
+        return timeGetTime() - SetTick_int.tickID
+
+    #global
 
     // 画面サイズ指定
     textsize_x    = 8
@@ -28,6 +39,12 @@
     #enum   SCREEN_CEL
     #enum   SCREEN_PASSWORD
     #enum   SCREEN_EXTRAMSG
+ 
+    #enum   tickFpsCount = 0
+    #enum   tickLangChange
+    #enum   tickSomeBlinkDown
+    #enum   tickSomeBlinkInterval
+    #enum   tickTrainBlink
 
     buffer SCREEN_S, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
 
@@ -527,7 +544,12 @@
 
     nowTimer = 0
     isFlash = 0
-    ticks = timeGetTime()
+
+    settick tickFpsCount
+    settick tickLangChange
+    settick tickSomeBlinkDown
+    settick tickSomeBlinkInterval
+    settick tickTrainBlink
 
     repeat  
         
@@ -1022,7 +1044,9 @@
         redraw 1
 
         // 5秒ごとに日本語・英語切り替わり
-        if ( ( cnt \ 500 ) == 1 ) {
+        if ( gettick( tickLangChange ) >= 5000 ) {
+
+            settick tickLangChange
 
             if ( isEng ) {
 
@@ -1037,7 +1061,9 @@
         }
 
         // 列車接近メッセージ点滅制御　1秒周期の0.5秒間隔
-        if ( ( ( cnt \ 50 ) == 1 ) and ( isApproaching ) ){
+        if ( ( gettick( tickTrainBlink ) >= 500 ) and ( isApproaching ) ){
+
+            settick tickTrainBlink
 
             if ( isApproachingView ) {
 
@@ -1052,7 +1078,10 @@
         }
 
         // 種別・行先・時刻・両数　点滅動作　1秒ごとに滅
-        if ( ( cnt \ 100 ) == 1 ) {
+        if ( gettick( tickSomeBlinkInterval ) >= 1000 ) {
+
+            settick tickSomeBlinkInterval
+            settick tickSomeBlinkDown
 
             isBlinking = 1
 
@@ -1061,11 +1090,9 @@
         // 種別・行先・時刻・両数　タイマ動作　滅から0.2秒で点
         if ( isBlinking ) {
 
-            blinkTimer ++
-            if ( blinkTimer == 20 ) {
+            if ( gettick( tickSomeBlinkDown ) >= 200 ) {
 
                 isBlinking = 0
-                blinkTimer = 0
 
             }
 
@@ -1074,9 +1101,9 @@
         nowTimer ++
         waitticks ++
 
-        if ( ( timeGetTime() - ticks ) >= 1000 ) {
+        if ( gettick( tickFpsCount ) >= 1000 ) {
 
-            ticks = timeGetTime()
+            settick tickFpsCount
 
             freamrate = waitticks
             waitticks = 0
