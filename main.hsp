@@ -39,23 +39,14 @@
     #enum   SCREEN_CEL
     #enum   SCREEN_PASSWORD
     #enum   SCREEN_EXTRAMSG
+    #enum   SCREEN_CONFIG
  
     #enum   tickFpsCount = 0
     #enum   tickLangChange
     #enum   tickSomeBlinkDown
     #enum   tickSomeBlinkInterval
     #enum   tickTrainBlink
-
-    buffer SCREEN_S, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
-
-    screen SCREEN_D, (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 4
-    title "スクリーン"
-
-    screen SCREEN_LOG
-    screen SCREEN_EXTRAMSG, , , 4
-
-    gsel SCREEN_EXTRAMSG, -1
-
+    #enum   tickScroll
     
     // ボタンサイズ指定
     #define     BTN_SIZE_X      128
@@ -86,6 +77,32 @@
     // ファイルが存在しないか
     #define isFileNotFound ( strsize == -1 )
 
+
+
+    onexit gosub *l_exit
+
+    buffer SCREEN_S, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 4
+
+    screen SCREEN_D, (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 4
+    title "スクリーン"
+
+    screen SCREEN_LOG, , , 4
+    title "ログ"
+
+    screen SCREEN_EXTRAMSG, , , 4
+    title "臨時メッセージ編集"
+
+    screen SCREEN_CONFIG, 320, 240, 4
+    title "設定"
+
+    objsize BTN_SIZE_X, BTN_SIZE_Y, 0
+    button gosub "フレームレート表示切替", *l_config_fpschange
+    button gosub "ログ画面表示", *l_config_log
+    button gosub "このソフトについて", *l_author
+
+
+    gsel SCREEN_CONFIG, -1
+    gsel SCREEN_EXTRAMSG, -1
 
     buffer SCREEN_DUMMY
 
@@ -171,7 +188,7 @@
     pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y *BTN_MUL : button gosub "リセット", *reset
 
     objsize BTN_SIZE_X *BTN_MUL, BTN_SIZE_Y, 0
-    pos 0, ginfo_cy + SPACE : button gosub "このソフトについて", *l_author
+    pos 0, ginfo_cy + SPACE : button gosub "設定", *l_config
     pos BTN_SIZE_X *BTN_MUL, ginfo_cy -BTN_SIZE_Y : button gosub "別のファイルを読込む", *l_select
 
     pos 0, ginfo_cy : button gosub "SMVファイルを書込む", *l_smartview_write
@@ -208,7 +225,7 @@
 
     isPasswordEnter = 0
     isPasswordCancel = 0
-    OverwritedImageFilePath = ""
+    ;OverwritedImageFilePath = ""
 
     switch getpath( nowLoadingFile, 18 )
 
@@ -346,17 +363,23 @@
     imsg_Approaching = $FF0000
 
     dim msgoffset, 5
+
     isBlinking = 0
-    isApproachingView = 0
-    isTrainmsg = 0
+    
     roll = 0
+
     isMsg = 0
+    isTrainmsg = 0
     isExtraMsg = 0
+
     isApproaching = 0
+    isApproachingView = 0
+    isEng = 0
+
     beforeMsg = -1
     nowTrain = 0
-    isEng = 0
     nowMsg = 0
+
     celImagePath = ""
     embedImageNumSize = 4
 
@@ -542,7 +565,6 @@
 
     putmes_msglib "ready\n", SCREEN_LOG
 
-    nowTimer = 0
     isFlash = 0
 
     settick tickFpsCount
@@ -550,6 +572,7 @@
     settick tickSomeBlinkDown
     settick tickSomeBlinkInterval
     settick tickTrainBlink
+    settick tickScroll
 
     repeat  
         
@@ -666,7 +689,12 @@
 
                     loop
 
-                    if ( ( nowTimer \ 2 ) == 0 ) : roll ++
+                    if ( gettick( tickScroll ) >= 15 ) {
+                        
+                        settick tickScroll
+                        roll ++
+
+                    }
 
                     // メッセージの右端が画面左端まで行ったら終了
                     if ( roll >= msgsize ) : isTrainmsg = 0
@@ -767,7 +795,12 @@
 
                     loop
 
-                    if ( ( nowTimer \ 2 ) == 0 ) : roll ++
+                    if ( gettick( tickScroll ) >= 15 ) {
+                        
+                        settick tickScroll
+                        roll ++
+
+                    }
 
                     // メッセージの右端が画面左端まで行ったら終了
                     if ( roll >= msgsize ) {
@@ -1023,19 +1056,23 @@
 
         gzoom (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 0, 0, 0, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 0
         
-        pos 0, 0 : mes strf( "%dfps", freamrate )
+        if ( isCountFps ) {
 
-        if ( isFlash ) {
+            pos 0, 0 : mes strf( "%dfps", freamrate )
 
-            color 255, 255, 255 : boxf 0, 0, ginfo_mesx +1, ginfo_mesy +1
-            color 0, 0, 0 : pos 0, 0 : mes strf( "%dfps", freamrate )
-            
-            isFlash --
+            if ( isFlash ) {
 
-        } else {
+                color 255, 255, 255 : boxf 0, 0, ginfo_mesx +1, ginfo_mesy +1
+                color 0, 0, 0 : pos 0, 0 : mes strf( "%dfps", freamrate )
+                
+                isFlash --
 
-            color 0, 0, 0 : boxf 0, 0, ginfo_mesx +1, ginfo_mesy +1
-            color 255, 255, 255 : pos 0, 0 : mes strf( "%dfps", freamrate )
+            } else {
+
+                color 0, 0, 0 : boxf 0, 0, ginfo_mesx +1, ginfo_mesy +1
+                color 255, 255, 255 : pos 0, 0 : mes strf( "%dfps", freamrate )
+
+            }
 
         }
 
@@ -1098,17 +1135,20 @@
 
         }
 
-        nowTimer ++
-        waitticks ++
+        if ( isCountFps ) {
 
-        if ( gettick( tickFpsCount ) >= 1000 ) {
+            waitticks ++
 
-            settick tickFpsCount
+            if ( gettick( tickFpsCount ) >= 1000 ) {
 
-            freamrate = waitticks
-            waitticks = 0
+                settick tickFpsCount
 
-            isFlash = 5
+                freamrate = waitticks
+                waitticks = 0
+
+                isFlash = 5
+
+            }
 
         }
 
@@ -1368,5 +1408,40 @@
     isMsg = 1
     isTrainmsg = 0
     roll = ( textsize_x * text_length + OFFSET_X ) *-1 ; 画面右端から始まるようにする
+
+    return
+
+*l_exit
+
+    if ( ginfo_act == SCREEN_D ) : end
+    if ( ginfo_act == SCREEN_CONTROL ) : end
+    
+    gsel ginfo_act, -1
+
+    return
+
+*l_config
+
+    gsel SCREEN_CONFIG, 1
+
+    return
+
+*l_config_fpschange
+
+    if ( isCountFps ) {
+
+        isCountFps = 0
+
+    } else {
+
+        isCountFps = 1
+
+    }
+
+    return
+
+*l_config_log
+
+    gsel SCREEN_LOG, 1
 
     return
