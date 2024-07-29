@@ -1158,6 +1158,7 @@
 
     goto *reset
 
+/* 各種操作 */
 *l_approaching_true
 
     // 列車接近セット
@@ -1258,18 +1259,14 @@
 
     return
 
+/* 画像保存 */
 *l_save
 
     bmpsave "pic"+ gettime(0) +"-"+ gettime(1) +"-"+ gettime(3) +"-"+ gettime(4) +"-"+ gettime(5) +"-"+ gettime(6) +".bmp"
 
     return
 
-*l_author
-
-    dialog "製作：秋月\n\nこのソフトウエアを使用したことで生じた損害について、製作者はいかなる場合でも一切責任を負いません。\n\nCopyright (c) 2024 AkidukiSystems All Right Reserved.\n  www.akidukisystems.com"
-
-    return
-
+/* ファイル選択 */
 *l_select
 
     nowDirectory = dir_cur
@@ -1287,6 +1284,20 @@
 
     return
 
+/* パスワード入力 */
+*l_passwordEnter
+
+    isPasswordEnter = 1
+
+    return
+
+*l_passwordCancel
+
+    isPasswordCancel = 1
+
+    return
+
+/* SMV */
 *l_smartview_write
 
     vsave ""+ gettime(0) +"-"+ gettime(1) +"-"+ gettime(3) +"-"+ gettime(4) +"-"+ gettime(5) +"-"+ gettime(6) +".smv"
@@ -1311,6 +1322,7 @@
 
     return
 
+/* ファイル読み込み時の更新 */
 *l_changed_data
 
     switch wparam
@@ -1330,18 +1342,7 @@
 
     stop
 
-*l_passwordEnter
-
-    isPasswordEnter = 1
-
-    return
-
-*l_passwordCancel
-
-    isPasswordCancel = 1
-
-    return
-
+/* 臨時メッセージ */
 *l_extramsg
 
     gsel SCREEN_EXTRAMSG, 1
@@ -1411,15 +1412,8 @@
 
     return
 
-*l_exit
 
-    if ( ginfo_act == SCREEN_D ) : end
-    if ( ginfo_act == SCREEN_CONTROL ) : end
-    
-    gsel ginfo_act, -1
-
-    return
-
+/* 設定画面 */
 *l_config
 
     gsel SCREEN_CONFIG, 1
@@ -1443,5 +1437,21 @@
 *l_config_log
 
     gsel SCREEN_LOG, 1
+
+    return
+
+*l_author
+
+    dialog "製作：秋月\n\nこのソフトウエアを使用したことで生じた損害について、製作者はいかなる場合でも一切責任を負いません。\n\nCopyright (c) 2024 AkidukiSystems All Right Reserved.\n  www.akidukisystems.com"
+
+    return
+
+/* 終了処理 */
+*l_exit
+
+    if ( ginfo_act == SCREEN_D ) : end
+    if ( ginfo_act == SCREEN_CONTROL ) : end
+    
+    gsel ginfo_act, -1
 
     return
