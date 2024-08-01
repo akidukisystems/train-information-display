@@ -47,6 +47,7 @@
     #enum   tickSomeBlinkInterval
     #enum   tickTrainBlink
     #enum   tickScroll
+    #enum   tickAutoMsg
     
     // ボタンサイズ指定
     #define     BTN_SIZE_X      128
@@ -361,6 +362,7 @@
     sdim msg_Approaching, 64, 2
 
     imsg_Approaching = $FF0000
+    imsg_ApproachingBackground = $000000
 
     dim msgoffset, 5
 
@@ -382,6 +384,13 @@
 
     celImagePath = ""
     embedImageNumSize = 4
+
+    autoMsgSwitch = 0
+    autoMsgTimer = 60000
+    isAutoMsg = 0
+
+    savedFixedMsgsize = -1
+    fixedMsgsize = 0
 
     putmes_msglib "変数を初期化しました\n", SCREEN_LOG
     putmes_msglib "読込むファイル：\""+ nowLoadingFile +"\"\n", SCREEN_LOG
@@ -486,6 +495,7 @@
     cfgAS_read "msg_Approaching.e", msg_Approaching.e
 
     cfgAS_read "imsg_Approaching", imsg_Approaching
+    cfgAS_read "imsg_ApproachingBackground", imsg_ApproachingBackground
 
     cfgAS_read "msgentrycount", msgEntry
 
@@ -573,6 +583,7 @@
     settick tickSomeBlinkInterval
     settick tickTrainBlink
     settick tickScroll
+    if ( isAutoMsg ) : settick tickAutoMsg
 
     repeat  
         
@@ -593,7 +604,17 @@
             if ( cnt == 1 ) {
 
                 // 列車接近メッセージ　点滅動作
-                if ( isApproachingView ) : rgbcolor imsg_Approaching : pos 0, textsize_y : mes msg_Approaching.isEng, 1
+                if ( isApproachingView ) {
+                    
+                    rgbcolor imsg_ApproachingBackground
+                    boxf 0, textsize_y, textsize_x*text_length+OFFSET_X, textsize_y *2 -1
+
+                    rgbcolor imsg_Approaching
+
+                    pos 0, textsize_y
+                    mes msg_Approaching.isEng, 1
+
+                }
 
                 // 列車メッセージスクロール
                 if ( isTrainmsg ) {
@@ -709,7 +730,7 @@
 
                     msgsize = 0
 
-                    repeat msgSections
+                    repeat msgSections, 1
 
                         if ( imsg_msg.cnt.nowMsg == 0 ) : break
 
@@ -802,14 +823,114 @@
 
                     }
 
-                    // メッセージの右端が画面左端まで行ったら終了
-                    if ( roll >= msgsize ) {
-                        
-                        isMsg = 0
-                        if ( beforeMsg != -1 ) {
+                    if ( imsg_msg.0.nowMsg != 0 ) {
 
-                            nowMsg = beforeMsg
-                            beforeMsg = -1
+                        if ( savedFixedMsgsize == -1 ) {
+
+                            savedFixedMsgsize = 0
+                            pos 0, textsize_y
+
+                            if ( instr( msg_msg.0.nowMsg, 0, "$" ) == -1 ) {
+
+                                rgbcolor imsg_msg.0.nowMsg
+                                mes msg_msg.0.nowMsg, 1
+
+                                savedFixedMsgsize += ginfo_mesx
+
+                            } else {
+
+                                sdim tmp
+                                split msg_msg.0.nowMsg, "$", tmp
+
+                                if ( tmp.0 != "" ) {
+
+                                    rgbcolor imsg_msg.0.nowMsg : mes tmp.0, 1
+
+                                    savedFixedMsgsize += ginfo_mesx
+
+                                }
+
+                                repeat length( tmp ) -1, 1
+
+                                    if ( splitedcnt == cnt ) : break
+
+                                    celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
+
+                                    rgbcolor imsg_msg.0.nowMsg : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
+                                    savedFixedMsgsize += ginfo_mesx + celSize_x
+
+                                loop
+
+                            }
+
+                        }
+
+                        color 0, 0, 0
+                        boxf 0, textsize_y, savedFixedMsgsize, textsize_y *2 -1
+
+                        fixedMsgsize = 0
+                        pos 0, textsize_y
+
+                        if ( instr( msg_msg.0.nowMsg, 0, "$" ) == -1 ) {
+
+                            rgbcolor imsg_msg.0.nowMsg
+                            mes msg_msg.0.nowMsg, 1
+
+                            fixedMsgsize += ginfo_mesx
+
+                        } else {
+
+                            sdim tmp
+                            split msg_msg.0.nowMsg, "$", tmp
+
+                            if ( tmp.0 != "" ) {
+
+                                rgbcolor imsg_msg.0.nowMsg : mes tmp.0, 1
+
+                                fixedMsgsize += ginfo_mesx
+
+                            }
+
+                            repeat length( tmp ) -1, 1
+
+                                if ( splitedcnt == cnt ) : break
+
+                                celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
+
+                                rgbcolor imsg_msg.0.nowMsg : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
+                                fixedMsgsize += ginfo_mesx + celSize_x
+
+                            loop
+
+                        }
+
+                        // メッセージの右端が画面左端まで行ったら終了
+                        if ( roll >= msgsize - fixedMsgsize ) {
+                            
+                            isMsg = 0
+                            savedFixedMsgsize -1
+                            if ( beforeMsg != -1 ) {
+
+                                nowMsg = beforeMsg
+                                beforeMsg = -1
+
+                            }
+
+                        }
+
+                    } else {
+
+                        // メッセージの右端が画面左端まで行ったら終了
+                        if ( roll >= msgsize ) {
+                            
+                            isMsg = 0
+                            savedFixedMsgsize = -1
+                            if ( beforeMsg != -1 ) {
+
+                                nowMsg = beforeMsg
+                                beforeMsg = -1
+
+                            }
 
                         }
 
@@ -1124,6 +1245,29 @@
 
         }
 
+        if ( isAutoMsg ) {
+
+            if ( gettick( tickAutoMsg ) >= autoMsgTimer ) {
+
+                settick tickAutoMsg
+
+                if ( autoMsgSwitch ) {
+                    
+                    gosub *l_msg
+                    autoMsgSwitch = 0
+
+                } else {
+
+                    gosub *l_trainmsg
+                    gosub *l_nextmsg
+                    autoMsgSwitch = 1
+
+                }
+
+            }
+
+        }
+
         // 種別・行先・時刻・両数　タイマ動作　滅から0.2秒で点
         if ( isBlinking ) {
 
@@ -1222,7 +1366,7 @@
 *l_next
 
     // 列車順送り
-    // 最後尾ならキャンセル
+    // 最後尾なら最初へ
     if ( ( nowTrain ) == entry -1 ) : return
 
     nowTrain ++
@@ -1243,9 +1387,15 @@
 
     // メッセージ順送り
     // 最後尾ならキャンセル
-    if ( ( nowMsg ) == msgEntry -1 ) : return
+    if ( ( nowMsg ) == msgEntry -1 ) {
 
-    nowMsg ++
+        nowMsg = 0
+
+    } else {
+
+        nowMsg ++
+
+    }
 
     return
 
