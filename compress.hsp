@@ -31,8 +31,8 @@
 
     nowtime = ""+ gettime(0) +"-"+ gettime(1) +"-"+ gettime(3) +"-"+ gettime(4) +"-"+ gettime(5) +"-"+ gettime(6) +""
 
-    bcopy path_ein, dir_cur +"\\cmprsd"+ nowtime +".ein"
-    bcopy path_pic, dir_cur +"\\cmprsd"+ nowtime +""+ getpath( path_pic, 2 )
+    bcopy path_ein, dir_cur +"\\cmprsd"+ getpath( path_ein, 8 )
+    bcopy path_pic, dir_cur +"\\cmprsd"+ getpath( path_ein, 9 ) +".cel"
 
     ZipCompress "cmprsd*.*", getpath( path_ein, 1 ) +".ceini"
 
@@ -46,7 +46,7 @@
 
     }
 
-    delete dir_cur +"\\cmprsd"+ nowtime +".ein"
-    delete dir_cur +"\\cmprsd"+ nowtime +""+ getpath( path_pic, 2 )
+    delete dir_cur +"\\cmprsd"+ getpath( path_ein, 8 )
+    delete dir_cur +"\\cmprsd"+ getpath( path_ein, 9 ) +".cel"
 
     return

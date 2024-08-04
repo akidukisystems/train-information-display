@@ -6,6 +6,7 @@
     #include "hsp3utf.as"
     #include "msglib.as"
     #include "hspda.as"
+    #include "zipfile.as"
 
     #module
 
@@ -125,6 +126,8 @@
 
     nowLoadingFile = ".\\entry\\entry.ini"
 
+    isExtractedFile = 0
+
 *reset
 
     isChangedFile = 0
@@ -222,20 +225,48 @@
 
     }
 
-    // ファイルは暗号化されているか
+    // 前回のゴミが残ってたら掃除
+
+    chdir "extract"
+
+    dirlist tmp, "*", 1
+
+    if ( ( tmp != "" ) and ( tmp != "\n" ) ) {
+
+        notesel tmp
+
+        repeat notemax
+
+            noteget tmp.1, cnt
+            delete tmp.1
+
+        loop
+
+        noteunsel
+
+        isExtractedFile = 0
+
+    }
+
+    chdir "..\\"
+
+    // ファイルは暗号化されているか　または圧縮されているか
 
     isPasswordEnter = 0
     isPasswordCancel = 0
-    ;OverwritedImageFilePath = ""
+    OverwritedImageFilePath = ""
 
     switch getpath( nowLoadingFile, 18 )
 
-    /*case ".ceini"
+    case ".ceini"
 
-        ZipExtract nowLoadingFile, dir_cur +"\\entry\\"
+        ZipExtract nowLoadingFile, dir_cur +"\\extract\\"
 
-        OverwritedImageFilePath = 
-*/
+        OverwritedImageFilePath = ".\\extract\\cmprsd"+ getpath( nowLoadingFile, 9 ) +".cel"
+        nowLoadingFile = ".\\extract\\cmprsd"+ getpath( nowLoadingFile, 9 ) +".ein"
+
+        isExtractedFile = 1
+
     case ".ein"
 
         exist nowLoadingFile
@@ -1599,9 +1630,36 @@
 /* 終了処理 */
 *l_exit
 
-    if ( ginfo_act == SCREEN_D ) : end
-    if ( ginfo_act == SCREEN_CONTROL ) : end
+    if ( ginfo_act == SCREEN_D ) : goto *l_end
+    if ( ginfo_act == SCREEN_CONTROL ) : goto *l_end
     
     gsel ginfo_act, -1
 
     return
+
+*l_end
+
+    if ( isExtractedFile ) {
+
+        chdir "extract"
+
+        dirlist tmp, "*", 1
+
+        notesel tmp
+
+        repeat notemax
+
+            noteget tmp.1, cnt
+            delete tmp.1
+
+        loop
+
+        noteunsel
+
+        isExtractedFile = 0
+        
+        chdir "..\\"
+
+    }
+
+    end
