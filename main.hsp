@@ -1263,7 +1263,7 @@
 
             redraw 1
 
-            logmes "R"+ cnt
+            logmes "refresh:"+ cnt
 
         }
 

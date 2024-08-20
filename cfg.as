@@ -100,8 +100,12 @@ return
         noteunsel
         Var_isLoad = 1
 
+        logmes "loaded cfgas file \""+ file +"\""
+
         return 0
     }
+
+    logmes "cannot load cfgas file \""+ file +"\""
 
 return 1
 
@@ -141,8 +145,6 @@ return 1
         if ( instr( Var_ThisConfigLine, 0, ";" ) == 0 ) : continue
 
         splitEx Var_ThisConfigLine, Var_ThisConfigLineArray, '='
-
-        logmes Var_ThisConfigLine
 
         if ( Var_ThisConfigLineArray.0 == name ) : {
 
@@ -221,8 +223,6 @@ return 1
         if ( Var_ThisConfigLine == "" ) : continue
 
         splitEx Var_ThisConfigLine, Var_ThisConfigLineArray, '='
-
-        logmes Var_ThisConfigLine
 
         if ( ( Var_ThisConfigLineArray.0 == name ) and isOverWrite ) : {
 
@@ -320,8 +320,6 @@ return 3
         if ( Var_ThisConfigLine == "" ) : continue
 
         splitEx Var_ThisConfigLine, Var_ThisConfigLineArray, '='
-
-        logmes Var_ThisConfigLine
 
         if ( Var_ThisConfigLineArray.0 == name ) : {
 
