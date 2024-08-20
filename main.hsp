@@ -134,7 +134,7 @@
 
     isChangedFile = 0
     sdim msg_extra, , 10
-    sdim imsg_extra, , 10
+    sdim msgColor_extra, , 10
     dim isBlinkExtraMsg, 10
 
     gsel SCREEN_S
@@ -373,29 +373,29 @@
     msgSections = 10
 
     sdim msg_thisTrainMsg, 64, msgSections, entry
-    dim imsg_thisTrainMsg, msgSections, entry
+    dim msgColor_thisTrainMsg, msgSections, entry
 
     msgEntry = 0
 
-    sdim msg_msg, 64, msgSections, msgEntry
-    dim imsg_msg, msgSections, msgEntry
+    sdim normalMsg, 64, msgSections, msgEntry
+    dim msgColor_normalMsg, msgSections, msgEntry
 
     dim isBlinkThisTrainMsg, msgSections, entry
     dim isBlinkMsg, msgSections, msgEntry
 
-    dim imsg_Line, entry
-    dim imsg_Type, entry
-    dim imsg_For, entry
-    dim imsg_Time, entry
-    dim imsg_Cars, entry
+    dim msgColor_Line, entry
+    dim msgColor_Type, entry
+    dim msgColor_For, entry
+    dim msgColor_Time, entry
+    dim msgColor_Cars, entry
 
     dim isBold, 5, entry
     dim isBlink, 5, entry
 
     sdim msg_Approaching, 64, 2
 
-    imsg_Approaching = $FF0000
-    imsg_ApproachingBackground = $000000
+    msgColor_Approaching = $FF0000
+    msgColor_ApproachingBackground = $000000
 
     dim msgoffset, 5
 
@@ -434,7 +434,7 @@
     waitms = 1
 
     isUsingMsWait = 1
-    msScroll = 18
+    msScroll = 20
     cntScroll = 2
 
     putmes_msglib "変数を初期化しました\n", SCREEN_LOG
@@ -458,11 +458,11 @@
         msg_Time.e.cnt          = ""
         msg_Cars.e.cnt          = ""
 
-        imsg_Line.cnt           = 0
-        imsg_Type.cnt           = 0
-        imsg_For.cnt            = 0
-        imsg_Time.cnt           = 0
-        imsg_Cars.cnt           = 0
+        msgColor_Line.cnt           = 0
+        msgColor_Type.cnt           = 0
+        msgColor_For.cnt            = 0
+        msgColor_Time.cnt           = 0
+        msgColor_Cars.cnt           = 0
 
         isBold.eLine.cnt        = 0
         isBold.eType.cnt        = 0
@@ -499,11 +499,11 @@
         repeat msgSections
 
             msg_thisTrainMsg.cnt.prevNestCnt     = ""
-            imsg_thisTrainMsg.cnt.prevNestCnt    = 0
+            msgColor_thisTrainMsg.cnt.prevNestCnt    = 0
             isBlinkThisTrainMsg.cnt.prevNestCnt  = 0
 
             cfgAS_read "msg_thisTrainMsg."+ cnt +"."+ prevNestCnt +"", msg_thisTrainMsg.cnt.prevNestCnt
-            cfgAS_read "imsg_thisTrainMsg."+ cnt +"."+ prevNestCnt +"", imsg_thisTrainMsg.cnt.prevNestCnt
+            cfgAS_read "msgColor_thisTrainMsg."+ cnt +"."+ prevNestCnt +"", msgColor_thisTrainMsg.cnt.prevNestCnt
             cfgAS_read "isBlinkThisTrainMsg."+ cnt +"."+ prevNestCnt +"", isBlinkThisTrainMsg.cnt.prevNestCnt
 
             if ( msg_thisTrainMsg.cnt.prevNestCnt == "$" ) : break
@@ -512,11 +512,11 @@
 
         loop
 
-        cfgAS_read "imsg_Line."+ cnt +"", imsg_Line.cnt
-        cfgAS_read "imsg_Type."+ cnt +"", imsg_Type.cnt
-        cfgAS_read "imsg_For."+ cnt +"", imsg_For.cnt
-        cfgAS_read "imsg_Time."+ cnt +"", imsg_Time.cnt
-        cfgAS_read "imsg_Cars."+ cnt +"", imsg_Cars.cnt
+        cfgAS_read "msgColor_Line."+ cnt +"", msgColor_Line.cnt
+        cfgAS_read "msgColor_Type."+ cnt +"", msgColor_Type.cnt
+        cfgAS_read "msgColor_For."+ cnt +"", msgColor_For.cnt
+        cfgAS_read "msgColor_Time."+ cnt +"", msgColor_Time.cnt
+        cfgAS_read "msgColor_Cars."+ cnt +"", msgColor_Cars.cnt
 
         cfgAS_read "isBold.Line."+ cnt +"", isBold.eLine.cnt
         cfgAS_read "isBold.Type."+ cnt +"", isBold.eType.cnt
@@ -539,13 +539,13 @@
     cfgAS_read "msg_Approaching.j", msg_Approaching.j
     cfgAS_read "msg_Approaching.e", msg_Approaching.e
 
-    cfgAS_read "imsg_Approaching", imsg_Approaching
-    cfgAS_read "imsg_ApproachingBackground", imsg_ApproachingBackground
+    cfgAS_read "msgColor_Approaching", msgColor_Approaching
+    cfgAS_read "msgColor_ApproachingBackground", msgColor_ApproachingBackground
 
     cfgAS_read "msgentrycount", msgEntry
 
-    sdim msg_msg, 64, msgSections, msgEntry
-    dim imsg_msg, msgSections, msgEntry
+    sdim normalMsg, 64, msgSections, msgEntry
+    dim msgColor_normalMsg, msgSections, msgEntry
 
     putmes_msglib "メッセージエントリ数："+ msgEntry +"\n", SCREEN_LOG
 
@@ -555,15 +555,15 @@
 
         repeat msgSections
 
-            msg_msg.cnt.prevNestCnt     = ""
-            imsg_msg.cnt.prevNestCnt    = 0
+            normalMsg.cnt.prevNestCnt     = ""
+            msgColor_normalMsg.cnt.prevNestCnt    = 0
             isBlinkMsg.cnt.prevNestCnt  = 0
 
-            cfgAS_read "msg_msg."+ cnt +"."+ prevNestCnt +"", msg_msg.cnt.prevNestCnt
-            cfgAS_read "imsg_msg."+ cnt +"."+ prevNestCnt +"", imsg_msg.cnt.prevNestCnt
+            cfgAS_read "normalMsg."+ cnt +"."+ prevNestCnt +"", normalMsg.cnt.prevNestCnt
+            cfgAS_read "msgColor_normalMsg."+ cnt +"."+ prevNestCnt +"", msgColor_normalMsg.cnt.prevNestCnt
             cfgAS_read "isBlinkMsg."+ cnt +"."+ prevNestCnt +"", isBlinkMsg.cnt.prevNestCnt
 
-            if ( msg_msg.cnt.prevNestCnt == "$" ) : break
+            if ( normalMsg.cnt.prevNestCnt == "$" ) : break
 
             await 1
             
@@ -647,291 +647,341 @@
 
     waitms = intf( 1.0 / targetFps * 1000.0 )
 
+    isEngPrev = 0
+    isBlinkingPrev = 0
+
+    isAction = 1
+
     repeat  
         
         // ファイルが変更されたらリセット
         if ( isChangedFile ) : break
 
-        gsel SCREEN_S  ;コピー元画面
-        redraw 0
-        color : boxf
+        if ( ( isMsg ) or ( isTrainmsg ) or ( isBlinking != isBlinkingPrev ) or ( isApproaching ) or ( isEng != isEngPrev ) or ( isAction ) ) {
 
-        // 種別・行先・時刻・両数　点滅動作
+            isAction = 0
 
-        mainboardcnt = cnt
+            gsel SCREEN_S  ;コピー元画面
+            redraw 0
+            mainboardcnt = cnt
 
-        repeat text_line
+            color : boxf
 
-            isShiftingLine = 0
-            if ( ( isCanview2ndLine != 1 ) and ( cnt != 0 ) ) : isShiftingLine = 1
+            // 種別・行先・時刻・両数　点滅動作
 
-            if ( cnt == 1 ) {
+            repeat text_line
 
-                // 列車接近メッセージ　点滅動作
-                if ( isApproachingView ) {
+                isShiftingLine = 0
+                if ( ( isCanview2ndLine != 1 ) and ( cnt != 0 ) ) : isShiftingLine = 1
+
+                if ( cnt == 1 ) {
+
+                    // 列車接近メッセージ　点滅動作
+                    if ( isApproachingView ) {
+                        
+                        rgbcolor msgColor_ApproachingBackground
+                        boxf 0, textsize_y, textsize_x*text_length+OFFSET_X, textsize_y *2 -1
+
+                        rgbcolor msgColor_Approaching
+
+                        pos 0, textsize_y
+                        mes msg_Approaching.isEng, 1
+
+                    }
+
+                    // 列車メッセージスクロール
+                    if ( isTrainmsg ) {
+
+                        // 右から左へ流す
+                        pos 0-roll, textsize_y
+
+                        msgsize = 0
+
+                        repeat msgSections
+
+                            if ( msgColor_thisTrainMsg.cnt.nowTrain == 0 ) : break
+
+                            if ( ( isBlinking and isBlinkThisTrainMsg.cnt.nowTrain ) == 0 ) {
+
+                                if ( instr( msg_thisTrainMsg.cnt.nowTrain, 0, "$" ) == -1 ) {
+
+                                    rgbcolor msgColor_thisTrainMsg.cnt.nowTrain
+                                    mes msg_thisTrainMsg.cnt.nowTrain, 1
+
+                                    msgsize += ginfo_mesx
+        
+                                } else {
+        
+                                    split msg_thisTrainMsg.cnt.nowTrain, "$", tmp
+                                    splitedcnt = stat
+        
+                                    prevNestCnt = cnt
+        
+                                    if ( tmp.0 != "" ) {
+        
+                                        rgbcolor msgColor_thisTrainMsg.cnt.nowTrain : mes tmp.0, 1
+
+                                        msgsize += ginfo_mesx
+        
+                                    }
+        
+                                    repeat length( tmp ) -1, 1
+        
+                                        if ( splitedcnt == cnt ) : break
+
+                                        celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
+
+                                        rgbcolor msgColor_thisTrainMsg.prevNestCnt.nowTrain  : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
+                                        msgsize += ginfo_mesx + celSize_x
+        
+                                    loop
+        
+                                }
+
+                            } else {
+
+                                gsel SCREEN_DUMMY
+                                
+                                if ( instr( msg_thisTrainMsg.cnt.nowTrain, 0, "$" ) == -1 ) {
+
+                                    mes msg_thisTrainMsg.cnt.nowTrain
+                                    tmp = ginfo_mesx
+
+                                } else {
+
+                                    tmp = 0
+
+                                    split msg_thisTrainMsg.cnt.nowTrain, "$", string
+                                    splitedcnt = stat
+        
+                                    if ( string.0 != "" ) {
+        
+                                        mes string.0
+
+                                        tmp += ginfo_mesx
+        
+                                    }
+        
+                                    repeat length( string ) -1, 1
+        
+                                        if ( splitedcnt == cnt ) : break
+
+                                        mes strmid( string.cnt, embedImageNumSize, strlen( string.cnt ) -embedImageNumSize )
+                                        tmp += ginfo_mesx + celSize_x
+        
+                                    loop
+
+                                }
+
+                                gsel SCREEN_S
+                                msgsize += tmp
+                                pos ginfo_cx + tmp, ginfo_cy
+
+                            }
+
+                        loop
+
+                        if ( isUsingMsWait ) {
+
+                            if ( gettick( tickScroll ) >= msScroll ) {
+                                
+                                settick tickScroll
+                                roll ++
+
+                            }
+
+                        } else {
+
+                            if ( ( mainboardcnt \ cntScroll ) == 0 ) {
                     
-                    rgbcolor imsg_ApproachingBackground
-                    boxf 0, textsize_y, textsize_x*text_length+OFFSET_X, textsize_y *2 -1
+                                roll ++
+        
+                            }
 
-                    rgbcolor imsg_Approaching
+                        }
 
-                    pos 0, textsize_y
-                    mes msg_Approaching.isEng, 1
+                        // メッセージの右端が画面左端まで行ったら終了
+                        if ( roll >= msgsize ) : isTrainmsg = 0
 
-                }
+                    }
 
-                // 列車メッセージスクロール
-                if ( isTrainmsg ) {
+                    // メッセージスクロール
+                    if ( isMsg ) {
 
-                    // 右から左へ流す
-                    pos 0-roll, textsize_y
+                        // 右から左へ流す
+                        pos 0-roll, textsize_y
 
-                    msgsize = 0
+                        msgsize = 0
 
-                    repeat msgSections
+                        repeat msgSections, 1
 
-                        if ( imsg_thisTrainMsg.cnt.nowTrain == 0 ) : break
+                            if ( msgColor_normalMsg.cnt.nowMsg == 0 ) : break
 
-                        if ( ( isBlinking and isBlinkThisTrainMsg.cnt.nowTrain ) == 0 ) {
+                            if ( ( isBlinking and isBlinkMsg.cnt.nowMsg ) == 0 ) {
 
-                            if ( instr( msg_thisTrainMsg.cnt.nowTrain, 0, "$" ) == -1 ) {
+                                if ( instr( normalMsg.cnt.nowMsg, 0, "$" ) == -1 ) {
 
-                                rgbcolor imsg_thisTrainMsg.cnt.nowTrain
-                                mes msg_thisTrainMsg.cnt.nowTrain, 1
-
-                                msgsize += ginfo_mesx
-    
-                            } else {
-    
-                                split msg_thisTrainMsg.cnt.nowTrain, "$", tmp
-                                splitedcnt = stat
-    
-                                prevNestCnt = cnt
-    
-                                if ( tmp.0 != "" ) {
-    
-                                    rgbcolor imsg_thisTrainMsg.cnt.nowTrain : mes tmp.0, 1
+                                    rgbcolor msgColor_normalMsg.cnt.nowMsg
+                                    mes normalMsg.cnt.nowMsg, 1
 
                                     msgsize += ginfo_mesx
-    
+        
+                                } else {
+        
+                                    split normalMsg.cnt.nowMsg, "$", tmp
+                                    splitedcnt = stat
+        
+                                    prevNestCnt = cnt
+        
+                                    if ( tmp.0 != "" ) {
+        
+                                        rgbcolor msgColor_normalMsg.cnt.nowMsg : mes tmp.0, 1
+
+                                        msgsize += ginfo_mesx
+        
+                                    }
+
+                                    repeat length( tmp ) -1, 1
+        
+                                        if ( splitedcnt == cnt ) : break
+
+                                        celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
+
+                                        rgbcolor msgColor_normalMsg.prevNestCnt.nowMsg : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
+                                        msgsize += ginfo_mesx + celSize_x
+        
+                                    loop
+        
                                 }
-    
-                                repeat length( tmp ) -1, 1
-    
-                                    if ( splitedcnt == cnt ) : break
 
-                                    celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
+                            } else {
 
-                                    rgbcolor imsg_thisTrainMsg.prevNestCnt.nowTrain  : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
-                                    msgsize += ginfo_mesx + celSize_x
-    
-                                loop
-    
+                                gsel SCREEN_DUMMY
+                                
+                                if ( instr( normalMsg.cnt.nowMsg, 0, "$" ) == -1 ) {
+
+                                    mes normalMsg.cnt.nowMsg
+                                    tmp = ginfo_mesx
+
+                                } else {
+
+                                    tmp = 0
+
+                                    split normalMsg.cnt.nowMsg, "$", string
+                                    splitedcnt = stat
+        
+                                    if ( string.0 != "" ) {
+        
+                                        mes string.0
+
+                                        tmp += ginfo_mesx
+        
+                                    }
+        
+                                    repeat length( string ) -1, 1
+        
+                                        if ( splitedcnt == cnt ) : break
+
+                                        mes strmid( string.cnt, embedImageNumSize, strlen( string.cnt ) -embedImageNumSize )
+                                        tmp += ginfo_mesx + celSize_x
+        
+                                    loop
+
+                                }
+
+                                gsel SCREEN_S
+                                msgsize += tmp
+                                pos ginfo_cx + tmp, ginfo_cy
+
+                            }
+
+                        loop
+
+                        if ( isUsingMsWait ) {
+
+                            if ( gettick( tickScroll ) >= msScroll ) {
+                                
+                                settick tickScroll
+                                roll ++
+
                             }
 
                         } else {
 
-                            gsel SCREEN_DUMMY
-                            
-                            if ( instr( msg_thisTrainMsg.cnt.nowTrain, 0, "$" ) == -1 ) {
+                            if ( ( mainboardcnt \ cntScroll ) == 0 ) {
 
-                                mes msg_thisTrainMsg.cnt.nowTrain
-                                tmp = ginfo_mesx
-
-                            } else {
-
-                                tmp = 0
-
-                                split msg_thisTrainMsg.cnt.nowTrain, "$", string
-                                splitedcnt = stat
-    
-                                if ( string.0 != "" ) {
-    
-                                    mes string.0
-
-                                    tmp += ginfo_mesx
-    
-                                }
-    
-                                repeat length( string ) -1, 1
-    
-                                    if ( splitedcnt == cnt ) : break
-
-                                    mes strmid( string.cnt, embedImageNumSize, strlen( string.cnt ) -embedImageNumSize )
-                                    tmp += ginfo_mesx + celSize_x
-    
-                                loop
-
+                                roll ++
+        
                             }
 
-                            gsel SCREEN_S
-                            msgsize += tmp
-                            pos ginfo_cx + tmp, ginfo_cy
-
                         }
 
-                    loop
+                        if ( msgColor_normalMsg.0.nowMsg != 0 ) {
 
-                    if ( isUsingMsWait ) {
+                            if ( savedFixedMsgsize == -1 ) {
 
-                        if ( gettick( tickScroll ) >= msScroll ) {
-                            
-                            settick tickScroll
-                            roll ++
+                                savedFixedMsgsize = 0
+                                pos 0, textsize_y
 
-                        }
+                                if ( instr( normalMsg.0.nowMsg, 0, "$" ) == -1 ) {
 
-                    } else {
-
-                        if ( ( mainboardcnt \ cntScroll ) == 0 ) {
-                
-                            roll ++
-    
-                        }
-
-                    }
-
-                    // メッセージの右端が画面左端まで行ったら終了
-                    if ( roll >= msgsize ) : isTrainmsg = 0
-
-                }
-
-                // メッセージスクロール
-                if ( isMsg ) {
-
-                    // 右から左へ流す
-                    pos 0-roll, textsize_y
-
-                    msgsize = 0
-
-                    repeat msgSections, 1
-
-                        if ( imsg_msg.cnt.nowMsg == 0 ) : break
-
-                        if ( ( isBlinking and isBlinkMsg.cnt.nowMsg ) == 0 ) {
-
-                            if ( instr( msg_msg.cnt.nowMsg, 0, "$" ) == -1 ) {
-
-                                rgbcolor imsg_msg.cnt.nowMsg
-                                mes msg_msg.cnt.nowMsg, 1
-
-                                msgsize += ginfo_mesx
-    
-                            } else {
-    
-                                split msg_msg.cnt.nowMsg, "$", tmp
-                                splitedcnt = stat
-    
-                                prevNestCnt = cnt
-    
-                                if ( tmp.0 != "" ) {
-    
-                                    rgbcolor imsg_msg.cnt.nowMsg : mes tmp.0, 1
-
-                                    msgsize += ginfo_mesx
-    
-                                }
-    
-                                repeat length( tmp ) -1, 1
-    
-                                    if ( splitedcnt == cnt ) : break
-
-                                    celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
-
-                                    rgbcolor imsg_msg.prevNestCnt.nowMsg : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
-                                    msgsize += ginfo_mesx + celSize_x
-    
-                                loop
-    
-                            }
-
-                        } else {
-
-                            gsel SCREEN_DUMMY
-                            
-                            if ( instr( msg_msg.cnt.nowMsg, 0, "$" ) == -1 ) {
-
-                                mes msg_msg.cnt.nowMsg
-                                tmp = ginfo_mesx
-
-                            } else {
-
-                                tmp = 0
-
-                                split msg_msg.cnt.nowMsg, "$", string
-                                splitedcnt = stat
-    
-                                if ( string.0 != "" ) {
-    
-                                    mes string.0
-
-                                    tmp += ginfo_mesx
-    
-                                }
-    
-                                repeat length( string ) -1, 1
-    
-                                    if ( splitedcnt == cnt ) : break
-
-                                    mes strmid( string.cnt, embedImageNumSize, strlen( string.cnt ) -embedImageNumSize )
-                                    tmp += ginfo_mesx + celSize_x
-    
-                                loop
-
-                            }
-
-                            gsel SCREEN_S
-                            msgsize += tmp
-                            pos ginfo_cx + tmp, ginfo_cy
-
-                        }
-
-                    loop
-
-                    if ( isUsingMsWait ) {
-
-                        if ( gettick( tickScroll ) >= msScroll ) {
-                            
-                            settick tickScroll
-                            roll ++
-
-                        }
-
-                    } else {
-
-                        if ( ( mainboardcnt \ cntScroll ) == 0 ) {
-
-                            roll ++
-    
-                        }
-
-                    }
-
-                    if ( imsg_msg.0.nowMsg != 0 ) {
-
-                        if ( savedFixedMsgsize == -1 ) {
-
-                            savedFixedMsgsize = 0
-                            pos 0, textsize_y
-
-                            if ( instr( msg_msg.0.nowMsg, 0, "$" ) == -1 ) {
-
-                                rgbcolor imsg_msg.0.nowMsg
-                                mes msg_msg.0.nowMsg, 1
-
-                                savedFixedMsgsize += ginfo_mesx
-
-                            } else {
-
-                                split msg_msg.0.nowMsg, "$", tmp
-                                splitedcnt = stat
-
-                                if ( tmp.0 != "" ) {
-
-                                    rgbcolor imsg_msg.0.nowMsg : mes tmp.0, 1
+                                    rgbcolor msgColor_normalMsg.0.nowMsg
+                                    mes normalMsg.0.nowMsg, 1
 
                                     savedFixedMsgsize += ginfo_mesx
 
+                                } else {
+
+                                    split normalMsg.0.nowMsg, "$", tmp
+                                    splitedcnt = stat
+
+                                    if ( tmp.0 != "" ) {
+
+                                        rgbcolor msgColor_normalMsg.0.nowMsg : mes tmp.0, 1
+
+                                        savedFixedMsgsize += ginfo_mesx
+
+                                    }
+
+                                    repeat length( tmp ) -1, 1
+
+                                        if ( splitedcnt == cnt ) : break
+
+                                        celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
+
+                                        rgbcolor msgColor_normalMsg.0.nowMsg : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
+                                        savedFixedMsgsize += ginfo_mesx + celSize_x
+
+                                    loop
+
+                                }
+
+                            }
+
+                            color 0, 0, 0
+                            boxf 0, textsize_y, savedFixedMsgsize, textsize_y *2 -1
+
+                            fixedMsgsize = 0
+                            pos 0, textsize_y
+
+                            if ( instr( normalMsg.0.nowMsg, 0, "$" ) == -1 ) {
+
+                                rgbcolor msgColor_normalMsg.0.nowMsg
+                                mes normalMsg.0.nowMsg, 1
+
+                                fixedMsgsize += ginfo_mesx
+
+                            } else {
+
+                                split normalMsg.0.nowMsg, "$", tmp
+                                splitedcnt = stat
+
+                                if ( tmp.0 != "" ) {
+
+                                    rgbcolor msgColor_normalMsg.0.nowMsg : mes tmp.0, 1
+
+                                    fixedMsgsize += ginfo_mesx
+
                                 }
 
                                 repeat length( tmp ) -1, 1
@@ -940,8 +990,90 @@
 
                                     celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
 
-                                    rgbcolor imsg_msg.0.nowMsg : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
-                                    savedFixedMsgsize += ginfo_mesx + celSize_x
+                                    rgbcolor msgColor_normalMsg.0.nowMsg : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
+                                    fixedMsgsize += ginfo_mesx + celSize_x
+
+                                loop
+
+                            }
+
+                            // メッセージの右端が画面左端まで行ったら終了
+                            if ( roll >= msgsize - fixedMsgsize ) {
+                                
+                                isMsg = 0
+                                savedFixedMsgsize -1
+                                if ( beforeMsg != -1 ) {
+
+                                    nowMsg = beforeMsg
+                                    beforeMsg = -1
+
+                                }
+
+                            }
+
+                        } else {
+
+                            // メッセージの右端が画面左端まで行ったら終了
+                            if ( roll >= msgsize ) {
+                                
+                                isMsg = 0
+                                savedFixedMsgsize = -1
+                                if ( beforeMsg != -1 ) {
+
+                                    nowMsg = beforeMsg
+                                    beforeMsg = -1
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                if ( ( isCanview2ndLine ) or ( cnt != 1 ) ) {
+
+                    if ( ( nowTrain +cnt -isShiftingLine ) < entry ) {
+
+                        if ( ( isBlinking and isBlink.eLine.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
+
+                            if ( instr( msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
+
+                                rgbcolor msgColor_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine, textsize_y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                                if ( isBold.eLine.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor msgColor_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +1, textsize_y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                            } else {
+
+                                split msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
+                                splitedcnt = stat
+
+                                prevNestCnt = cnt
+                                msgPosShift = 0
+
+                                if ( tmp.0 != "" ) {
+
+                                    rgbcolor msgColor_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine, textsize_y *cnt : mes tmp.0, 1
+                                    if ( isBold.eLine.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor msgColor_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +1, textsize_y *cnt : mes tmp.0, 1        
+
+                                    msgPosShift = ginfo_mesx
+
+                                }
+
+                                repeat length( tmp ) -1, 1
+
+                                    if ( splitedcnt == cnt ) : break
+
+                                    pos textsize_x * msgoffset.eLine +msgPosShift, textsize_y *prevNestCnt
+                                    celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
+
+                                    msgPosShift += celSize_x
+
+                                    rgbcolor msgColor_Line.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +msgPosShift , textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
+                                    if ( isBold.eLine.( nowTrain +prevNestCnt -isShiftingLine ) ) : rgbcolor msgColor_Line.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +msgPosShift +1, textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1        
+
+                                    msgPosShift += ginfo_mesx
 
                                 loop
 
@@ -949,298 +1081,177 @@
 
                         }
 
-                        color 0, 0, 0
-                        boxf 0, textsize_y, savedFixedMsgsize, textsize_y *2 -1
+                        if ( ( isBlinking and isBlink.eType.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
 
-                        fixedMsgsize = 0
-                        pos 0, textsize_y
+                            if ( instr( msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
 
-                        if ( instr( msg_msg.0.nowMsg, 0, "$" ) == -1 ) {
+                                rgbcolor msgColor_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType, textsize_y *cnt : mes msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                                if ( isBold.eType.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor msgColor_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +1, textsize_y *cnt : mes msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 1
 
-                            rgbcolor imsg_msg.0.nowMsg
-                            mes msg_msg.0.nowMsg, 1
+                            } else {
 
-                            fixedMsgsize += ginfo_mesx
+                                split msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
+                                splitedcnt = stat
 
-                        } else {
+                                prevNestCnt = cnt
+                                msgPosShift = 0
 
-                            split msg_msg.0.nowMsg, "$", tmp
-                            splitedcnt = stat
+                                if ( tmp.0 != "" ) {
 
-                            if ( tmp.0 != "" ) {
+                                    rgbcolor msgColor_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType, textsize_y *cnt : mes tmp.0, 1
+                                    if ( isBold.eType.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor msgColor_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +1, textsize_y *cnt : mes tmp.0, 1        
 
-                                rgbcolor imsg_msg.0.nowMsg : mes tmp.0, 1
+                                    msgPosShift = ginfo_mesx
 
-                                fixedMsgsize += ginfo_mesx
+                                }
+
+                                repeat length( tmp ) -1, 1
+
+                                    if ( splitedcnt == cnt ) : break
+
+                                    pos textsize_x * msgoffset.eType +msgPosShift, textsize_y *prevNestCnt
+                                    celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
+
+                                    msgPosShift += celSize_x
+
+                                    rgbcolor msgColor_Type.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +msgPosShift , textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
+                                    if ( isBold.eType.( nowTrain +prevNestCnt -isShiftingLine ) ) : rgbcolor msgColor_Type.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +msgPosShift +1, textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1        
+
+                                    msgPosShift += ginfo_mesx
+
+                                loop
 
                             }
+                        }
 
-                            repeat length( tmp ) -1, 1
+                        if ( ( isBlinking and isBlink.eFor.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
 
-                                if ( splitedcnt == cnt ) : break
+                            if ( instr( msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
 
-                                celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
+                                rgbcolor msgColor_For.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor, textsize_y *cnt : mes msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                                if ( isBold.eFor.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor msgColor_For.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor +1, textsize_y *cnt : mes msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 1
 
-                                rgbcolor imsg_msg.0.nowMsg : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
-                                fixedMsgsize += ginfo_mesx + celSize_x
+                            } else {
 
-                            loop
+                                split msg_For.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
+                                splitedcnt = stat
+
+                                prevNestCnt = cnt
+                                msgPosShift = 0
+
+                                if ( tmp.0 != "" ) {
+
+                                    rgbcolor msgColor_For.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor, textsize_y *cnt : mes tmp.0, 1
+                                    if ( isBold.eFor.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor msgColor_For.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor +1, textsize_y *cnt : mes tmp.0, 1        
+
+                                    msgPosShift = ginfo_mesx
+
+                                }
+
+                                repeat length( tmp ) -1, 1
+
+                                    if ( splitedcnt == cnt ) : break
+
+                                    pos textsize_x * msgoffset.eFor +msgPosShift, textsize_y *prevNestCnt
+                                    celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
+
+                                    msgPosShift += celSize_x
+
+                                    rgbcolor msgColor_For.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor +msgPosShift , textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
+                                    if ( isBold.eFor.( nowTrain +prevNestCnt -isShiftingLine ) ) : rgbcolor msgColor_For.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor +msgPosShift +1, textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1        
+
+                                    msgPosShift += ginfo_mesx
+
+                                loop
+
+                            }
+                        }
+
+                        if ( ( isBlinking and isBlink.eTime.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
+
+                            if ( instr( msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
+
+                                rgbcolor msgColor_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime, textsize_y *cnt : mes msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                                if ( isBold.eTime.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor msgColor_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +1, textsize_y *cnt : mes msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 1
+
+                            } else {
+
+                                split msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
+                                splitedcnt = stat
+
+                                prevNestCnt = cnt
+                                msgPosShift = 0
+
+                                if ( tmp.0 != "" ) {
+
+                                    rgbcolor msgColor_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime, textsize_y *cnt : mes tmp.0, 1
+                                    if ( isBold.eTime.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor msgColor_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +1, textsize_y *cnt : mes tmp.0, 1        
+
+                                    msgPosShift = ginfo_mesx
+
+                                }
+
+                                repeat length( tmp ) -1, 1
+
+                                    if ( splitedcnt == cnt ) : break
+
+                                    pos textsize_x * msgoffset.eTime +msgPosShift, textsize_y *prevNestCnt
+                                    celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
+
+                                    msgPosShift += celSize_x
+
+                                    rgbcolor msgColor_Time.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +msgPosShift , textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
+                                    if ( isBold.eTime.( nowTrain +prevNestCnt -isShiftingLine ) ) : rgbcolor msgColor_Time.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +msgPosShift +1, textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1        
+
+                                    msgPosShift += ginfo_mesx
+                                    
+                                loop
+
+                            }
 
                         }
 
-                        // メッセージの右端が画面左端まで行ったら終了
-                        if ( roll >= msgsize - fixedMsgsize ) {
-                            
-                            isMsg = 0
-                            savedFixedMsgsize -1
-                            if ( beforeMsg != -1 ) {
+                        if ( ( isBlinking and isBlink.eCars.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
 
-                                nowMsg = beforeMsg
-                                beforeMsg = -1
+                            if ( instr( msg_Cars.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
 
-                            }
+                                rgbcolor msgColor_Cars.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars, textsize_y *cnt : mes msg_Cars.isEng.( nowTrain +cnt -isShiftingLine ), 1
+                                if ( isBold.eCars.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor msgColor_Cars.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars +1, textsize_y *cnt : mes msg_Cars.isEng.( nowTrain +cnt -isShiftingLine ), 1
 
-                        }
+                            } else {
 
-                    } else {
+                                split msg_Cars.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
+                                splitedcnt = stat
 
-                        // メッセージの右端が画面左端まで行ったら終了
-                        if ( roll >= msgsize ) {
-                            
-                            isMsg = 0
-                            savedFixedMsgsize = -1
-                            if ( beforeMsg != -1 ) {
+                                prevNestCnt = cnt
+                                msgPosShift = 0
 
-                                nowMsg = beforeMsg
-                                beforeMsg = -1
+                                if ( tmp.0 != "" ) {
 
-                            }
+                                    rgbcolor msgColor_Cars.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars, textsize_y *cnt : mes tmp.0, 1
+                                    if ( isBold.eCars.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor msgColor_Cars.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars +1, textsize_y *cnt : mes tmp.0, 1        
 
-                        }
+                                    msgPosShift = ginfo_mesx
 
-                    }
+                                }
 
-                }
+                                repeat length( tmp ) -1, 1
 
-            }
+                                    if ( splitedcnt == cnt ) : break
 
-            if ( ( isCanview2ndLine ) or ( cnt != 1 ) ) {
+                                    pos textsize_x * msgoffset.eCars +msgPosShift, textsize_y *prevNestCnt
+                                    celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
 
-                if ( ( nowTrain +cnt -isShiftingLine ) < entry ) {
+                                    msgPosShift += celSize_x
 
-                    if ( ( isBlinking and isBlink.eLine.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
+                                    rgbcolor msgColor_Cars.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars +msgPosShift , textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
+                                    if ( isBold.eCars.( nowTrain +prevNestCnt -isShiftingLine ) ) : rgbcolor msgColor_Cars.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars +msgPosShift +1, textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1        
 
-                        if ( instr( msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
-
-                            rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine, textsize_y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
-                            if ( isBold.eLine.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +1, textsize_y *cnt : mes msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), 1
-
-                        } else {
-
-                            split msg_Line.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
-                            splitedcnt = stat
-
-                            prevNestCnt = cnt
-                            msgPosShift = 0
-
-                            if ( tmp.0 != "" ) {
-
-                                rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine, textsize_y *cnt : mes tmp.0, 1
-                                if ( isBold.eLine.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Line.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +1, textsize_y *cnt : mes tmp.0, 1        
-
-                                msgPosShift = ginfo_mesx
+                                    msgPosShift += ginfo_mesx
+                                    
+                                loop
 
                             }
-
-                            repeat length( tmp ) -1, 1
-
-                                if ( splitedcnt == cnt ) : break
-
-                                pos textsize_x * msgoffset.eLine +msgPosShift, textsize_y *prevNestCnt
-                                celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
-
-                                msgPosShift += celSize_x
-
-                                rgbcolor imsg_Line.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +msgPosShift , textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
-                                if ( isBold.eLine.( nowTrain +prevNestCnt -isShiftingLine ) ) : rgbcolor imsg_Line.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eLine +msgPosShift +1, textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1        
-
-                                msgPosShift += ginfo_mesx
-
-                            loop
-
-                        }
-
-                    }
-
-                    if ( ( isBlinking and isBlink.eType.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
-
-                        if ( instr( msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
-
-                            rgbcolor imsg_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType, textsize_y *cnt : mes msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 1
-                            if ( isBold.eType.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +1, textsize_y *cnt : mes msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), 1
-
-                        } else {
-
-                            split msg_Type.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
-                            splitedcnt = stat
-
-                            prevNestCnt = cnt
-                            msgPosShift = 0
-
-                            if ( tmp.0 != "" ) {
-
-                                rgbcolor imsg_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType, textsize_y *cnt : mes tmp.0, 1
-                                if ( isBold.eType.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Type.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +1, textsize_y *cnt : mes tmp.0, 1        
-
-                                msgPosShift = ginfo_mesx
-
-                            }
-
-                            repeat length( tmp ) -1, 1
-
-                                if ( splitedcnt == cnt ) : break
-
-                                pos textsize_x * msgoffset.eType +msgPosShift, textsize_y *prevNestCnt
-                                celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
-
-                                msgPosShift += celSize_x
-
-                                rgbcolor imsg_Type.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +msgPosShift , textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
-                                if ( isBold.eType.( nowTrain +prevNestCnt -isShiftingLine ) ) : rgbcolor imsg_Type.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eType +msgPosShift +1, textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1        
-
-                                msgPosShift += ginfo_mesx
-
-                            loop
-
-                        }
-                    }
-
-                    if ( ( isBlinking and isBlink.eFor.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
-
-                        if ( instr( msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
-
-                            rgbcolor imsg_For.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor, textsize_y *cnt : mes msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 1
-                            if ( isBold.eFor.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_For.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor +1, textsize_y *cnt : mes msg_For.isEng.( nowTrain +cnt -isShiftingLine ), 1
-
-                        } else {
-
-                            split msg_For.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
-                            splitedcnt = stat
-
-                            prevNestCnt = cnt
-                            msgPosShift = 0
-
-                            if ( tmp.0 != "" ) {
-
-                                rgbcolor imsg_For.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor, textsize_y *cnt : mes tmp.0, 1
-                                if ( isBold.eFor.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_For.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor +1, textsize_y *cnt : mes tmp.0, 1        
-
-                                msgPosShift = ginfo_mesx
-
-                            }
-
-                            repeat length( tmp ) -1, 1
-
-                                if ( splitedcnt == cnt ) : break
-
-                                pos textsize_x * msgoffset.eFor +msgPosShift, textsize_y *prevNestCnt
-                                celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
-
-                                msgPosShift += celSize_x
-
-                                rgbcolor imsg_For.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor +msgPosShift , textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
-                                if ( isBold.eFor.( nowTrain +prevNestCnt -isShiftingLine ) ) : rgbcolor imsg_For.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eFor +msgPosShift +1, textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1        
-
-                                msgPosShift += ginfo_mesx
-
-                            loop
-
-                        }
-                    }
-
-                    if ( ( isBlinking and isBlink.eTime.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
-
-                        if ( instr( msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
-
-                            rgbcolor imsg_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime, textsize_y *cnt : mes msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 1
-                            if ( isBold.eTime.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +1, textsize_y *cnt : mes msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), 1
-
-                        } else {
-
-                            split msg_Time.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
-                            splitedcnt = stat
-
-                            prevNestCnt = cnt
-                            msgPosShift = 0
-
-                            if ( tmp.0 != "" ) {
-
-                                rgbcolor imsg_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime, textsize_y *cnt : mes tmp.0, 1
-                                if ( isBold.eTime.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Time.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +1, textsize_y *cnt : mes tmp.0, 1        
-
-                                msgPosShift = ginfo_mesx
-
-                            }
-
-                            repeat length( tmp ) -1, 1
-
-                                if ( splitedcnt == cnt ) : break
-
-                                pos textsize_x * msgoffset.eTime +msgPosShift, textsize_y *prevNestCnt
-                                celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
-
-                                msgPosShift += celSize_x
-
-                                rgbcolor imsg_Time.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +msgPosShift , textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
-                                if ( isBold.eTime.( nowTrain +prevNestCnt -isShiftingLine ) ) : rgbcolor imsg_Time.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eTime +msgPosShift +1, textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1        
-
-                                msgPosShift += ginfo_mesx
-                                
-                            loop
-
-                        }
-
-                    }
-
-                    if ( ( isBlinking and isBlink.eCars.( nowTrain +cnt -isShiftingLine ) ) == 0 ) {
-
-                        if ( instr( msg_Cars.isEng.( nowTrain +cnt -isShiftingLine ), 0, "$" ) == -1 ) {
-
-                            rgbcolor imsg_Cars.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars, textsize_y *cnt : mes msg_Cars.isEng.( nowTrain +cnt -isShiftingLine ), 1
-                            if ( isBold.eCars.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Cars.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars +1, textsize_y *cnt : mes msg_Cars.isEng.( nowTrain +cnt -isShiftingLine ), 1
-
-                        } else {
-
-                            split msg_Cars.isEng.( nowTrain +cnt -isShiftingLine ), "$", tmp
-                            splitedcnt = stat
-
-                            prevNestCnt = cnt
-                            msgPosShift = 0
-
-                            if ( tmp.0 != "" ) {
-
-                                rgbcolor imsg_Cars.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars, textsize_y *cnt : mes tmp.0, 1
-                                if ( isBold.eCars.( nowTrain +cnt -isShiftingLine ) ) : rgbcolor imsg_Cars.( nowTrain +cnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars +1, textsize_y *cnt : mes tmp.0, 1        
-
-                                msgPosShift = ginfo_mesx
-
-                            }
-
-                            repeat length( tmp ) -1, 1
-
-                                if ( splitedcnt == cnt ) : break
-
-                                pos textsize_x * msgoffset.eCars +msgPosShift, textsize_y *prevNestCnt
-                                celput SCREEN_CEL, int( strmid( tmp.cnt, 0, embedImageNumSize ) )
-
-                                msgPosShift += celSize_x
-
-                                rgbcolor imsg_Cars.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars +msgPosShift , textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1
-                                if ( isBold.eCars.( nowTrain +prevNestCnt -isShiftingLine ) ) : rgbcolor imsg_Cars.( nowTrain +prevNestCnt -isShiftingLine ) : pos textsize_x * msgoffset.eCars +msgPosShift +1, textsize_y *prevNestCnt : mes strmid( tmp.cnt, embedImageNumSize, strlen( tmp.cnt ) -embedImageNumSize ), 1        
-
-                                msgPosShift += ginfo_mesx
-                                
-                            loop
 
                         }
 
@@ -1248,11 +1259,13 @@
 
                 }
 
-            }
+            loop
 
-        loop
+            redraw 1
 
-        redraw 1
+            logmes "R"+ cnt
+
+        }
 
         // コピー
         gsel SCREEN_D
@@ -1260,7 +1273,7 @@
         redraw 0
 
         gzoom (textsize_x*text_length+OFFSET_X)*SCREEN_MAG, (textsize_y*text_line+OFFSET_Y)*SCREEN_MAG, 0, 0, 0, textsize_x*text_length+OFFSET_X, textsize_y*text_line+OFFSET_Y, 0
-        
+
         if ( isUsingEffect ) {
 
             gmode 7, effectSize_x /2, effectSize_y, 0
@@ -1291,6 +1304,8 @@
         pos 0, 0
 
         redraw 1
+
+        isEngPrev = isEng
 
         // 5秒ごとに日本語・英語切り替わり
         if ( gettick( tickLangChange ) >= 5000 ) {
@@ -1325,6 +1340,8 @@
             }
 
         }
+
+        isBlinkingPrev = isBlinking
 
         // 種別・行先・時刻・両数　点滅動作　1秒ごとに滅
         if ( gettick( tickSomeBlinkInterval ) >= 1000 ) {
@@ -1408,6 +1425,7 @@
 
     }
     isApproachingView = 0
+    isAction = 1
 
     return
 
@@ -1416,6 +1434,7 @@
     // 列車接近リセット
     isApproaching = 0
     isApproachingView = 0
+    isAction = 1
 
     return
 
@@ -1434,6 +1453,7 @@
     }
     isTrainmsg = 0
     roll = ( textsize_x * text_length + OFFSET_X ) *-1 ; 画面右端から始まるようにする
+    isAction = 1
 
     return
 
@@ -1452,6 +1472,8 @@
 
     }
     roll = ( textsize_x * text_length + OFFSET_X ) *-1 ; 画面右端から始まるようにする
+    isAction = 1
+
     return
 
 *l_next
@@ -1461,6 +1483,7 @@
     if ( ( nowTrain ) == entry -1 ) : return
 
     nowTrain ++
+    isAction = 1
 
     return
 
@@ -1471,6 +1494,7 @@
     if ( nowTrain == 0 ) : return
 
     nowTrain --
+    isAction = 1
 
     return
 
@@ -1488,6 +1512,8 @@
 
     }
 
+    isAction = 1
+
     return
 
 *l_prevmsg
@@ -1497,6 +1523,7 @@
     if ( nowMsg == 0 ) : return
 
     nowMsg --
+    isAction = 1
 
     return
 
@@ -1520,6 +1547,7 @@
 
     isChangedFile = 1
     nowLoadingFile = refstr
+    isAction = 1
 
     PostMessage hwnd, MSG_CHANGED_DATA, 2, 0
 
@@ -1561,6 +1589,8 @@
 
     }
 
+    isAction = 1
+
     return
 
 /* ファイル読み込み時の更新 */
@@ -1601,7 +1631,7 @@
         input msg_extra.cnt, 640 -ginfo_mesx, 20, 0
 
         pos ginfo_mesx, 20 *cnt *2 +20
-        input imsg_extra.cnt, 100, 20, 6
+        input msgColor_extra.cnt, 100, 20, 6
 
         pos ginfo_mesx +100, 20 *cnt *2 +20
         combox isBlinkExtraMsg.cnt, 0, "点滅しない\n点滅する"
@@ -1624,13 +1654,13 @@
 
     foreach msg_extra
 
-        msg_msg.cnt.msgEntry = msg_extra.cnt
+        normalMsg.cnt.msgEntry = msg_extra.cnt
 
     loop
 
-    foreach imsg_extra
+    foreach msgColor_extra
 
-        imsg_msg.cnt.msgEntry = int( "$"+ imsg_extra.cnt )
+        msgColor_normalMsg.cnt.msgEntry = int( "$"+ msgColor_extra.cnt )
 
     loop
 
@@ -1650,6 +1680,7 @@
     isMsg = 1
     isTrainmsg = 0
     roll = ( textsize_x * text_length + OFFSET_X ) *-1 ; 画面右端から始まるようにする
+    isAction = 1
 
     return
 
